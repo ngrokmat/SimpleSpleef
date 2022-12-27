@@ -1,0 +1,4 @@
+# Project exclude paths
+/out/
+/support_v_1_8_R3/target/
+/target/

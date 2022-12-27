@@ -1,0 +1,16 @@
+name: SimpleSpleef
+version: 1.0
+main: io.thadow.simplespleef.Main
+author: ThadowDev (Nicolás)
+api-version: 1.13
+
+commands:
+  simplespleef:
+    aliases: [sp]
+    description: Main command.
+  join:
+    aliases: [entrar]
+    description: Join command.
+  leave:
+    aliases: [salir]
+    description: Leave command.

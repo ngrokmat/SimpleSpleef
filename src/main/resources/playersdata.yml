@@ -1,0 +1,9 @@
+Items:
+  Slot-1:
+    Material: DIAMOND_SHOVEL
+    Name: "&bDiamond Shovel"
+    Amount: 1
+    Lore:
+      - ""
+    Enchantments:
+      - "DIG_SPEED:5"

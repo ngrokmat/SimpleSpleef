@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="SimpleSpleef">
+    <output-path>$PROJECT_DIR$/out/artifacts/SimpleSpleef</output-path>
+    <root id="archive" name="SimpleSpleef.jar">
+      <element id="module-output" name="SimpleSpleef" />
+      <element id="module-output" name="support_v_1_8_R3" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/plugin.yml" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/playersdata.yml" />
+    </root>
+  </artifact>
+</component>
