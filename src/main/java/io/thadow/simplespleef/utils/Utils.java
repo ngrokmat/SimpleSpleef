@@ -1,15 +1,20 @@
 package io.thadow.simplespleef.utils;
 
 import io.thadow.simplespleef.api.configuration.ConfigurationFile;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Utils {
+    @Getter
+    private static List<Player> builders = new ArrayList<>();
+
     public static String format(String s) {
         return ChatColor.translateAlternateColorCodes('&', s);
     }

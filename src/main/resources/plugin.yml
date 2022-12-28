@@ -6,7 +6,7 @@ api-version: 1.13
 
 commands:
   simplespleef:
-    aliases: [sp]
+    aliases: [sp, ssp]
     description: Main command.
   join:
     aliases: [entrar]
@@ -14,3 +14,5 @@ commands:
   leave:
     aliases: [salir]
     description: Leave command.
+  build:
+    description: Build command.

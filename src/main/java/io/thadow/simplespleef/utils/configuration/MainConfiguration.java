@@ -24,6 +24,15 @@ public class MainConfiguration extends ConfigurationFile {
             configuration.addDefault("Configuration.Storage.MySQL.Password", "password");
             configuration.addDefault("Configuration.Storage.MySQL.SSL", false);
 
+            configuration.addDefault("Configuration.Items.Lobby.Arena Selector Item.Material", "EMERALD");
+            configuration.addDefault("Configuration.Items.Lobby.Arena Selector Item.Slot", 1);
+            configuration.addDefault("Configuration.Items.Lobby.Arena Selector Item.Name", "&a&lPlay &7(Right click)");
+            configuration.addDefault("Configuration.Items.Lobby.Arena Selector Item.Unbreakable", true);
+            configuration.addDefault("Configuration.Items.Lobby.Arena Selector Item.Amount", 1);
+            configuration.addDefault("Configuration.Items.Lobby.Arena Selector Item.Lore", Arrays.asList("&7Use this item to", "&7select an arena and play"));
+
+
+
             configuration.addDefault("Configuration.Arenas.Status.Waiting", "&aWAITING");
             configuration.addDefault("Configuration.Arenas.Status.Starting", "&6STARTING");
             configuration.addDefault("Configuration.Arenas.Status.Playing", "&cPLAYING");

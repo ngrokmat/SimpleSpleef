@@ -10,7 +10,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="af7f7854-827d-4cfe-abf5-694ba6d4f010" name="Default Changelist" comment="Update - 5">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/items/ItemBuilder.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/configuration/ConfigurationFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/configuration/ConfigurationFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/Arena.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/Arena.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/ArenaCooldown.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/ArenaCooldown.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/configuration/ArenaConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/configuration/ArenaConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/BuildCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/BuildCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/items/ItemGiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/items/ItemGiver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/ArenaListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/ArenaListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/PlayerListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/PlayerListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/SignsListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/SignsListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/managers/ScoreboardManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/managers/ScoreboardManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/Utils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/configuration/MainConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/configuration/MainConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/playersdata.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/playersdata.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +66,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/resources/playersdata.yml" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/resources/plugin.yml" />
     <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15820312" />
     <property name="project.structure.side.proportion" value="0.2" />

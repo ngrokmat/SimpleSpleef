@@ -1,5 +1,6 @@
 package io.thadow.simplespleef.api.configuration;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -79,6 +80,9 @@ public class ConfigurationFile {
         return configuration.contains(path);
     }
 
+    public ConfigurationSection getConfigurationSection(String path) {
+        return configuration.getConfigurationSection(path);
+    }
 
     public String getConfigName() {
         return configName;

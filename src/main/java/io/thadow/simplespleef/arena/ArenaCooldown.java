@@ -54,9 +54,7 @@ public class ArenaCooldown {
 
         BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
         taskID = scheduler.scheduleSyncRepeatingTask(Main.getInstance(), () -> {
-            arena.broadcast("Time: " + time);
             if (time == 0) {
-                Bukkit.broadcastMessage("Finalizada 2");
                 arena.end(false);
                 cancel(taskID);
                 return;

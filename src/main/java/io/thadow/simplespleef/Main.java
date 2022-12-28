@@ -3,6 +3,7 @@ package io.thadow.simplespleef;
 import io.thadow.simplespleef.api.server.VersionHandler;
 import io.thadow.simplespleef.api.storage.StorageType;
 import io.thadow.simplespleef.arena.Arena;
+import io.thadow.simplespleef.commands.BuildCommand;
 import io.thadow.simplespleef.commands.JoinCommand;
 import io.thadow.simplespleef.commands.LeaveCommand;
 import io.thadow.simplespleef.commands.MainCommand;
@@ -19,6 +20,7 @@ import io.thadow.simplespleef.utils.configuration.ScoreboardsConfiguration;
 import io.thadow.simplespleef.utils.configuration.SignsConfiguration;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -78,6 +80,7 @@ public class Main extends JavaPlugin {
         registerCommand(new MainCommand(), "simplespleef");
         registerCommand(new JoinCommand(), "join");
         registerCommand(new LeaveCommand(), "leave");
+        registerCommand(new BuildCommand(), "build");
         registerListeners(new SignsListener(), new PlayerListener(), new ArenaListener());
         ArenaManager.getManager().loadArenas();
         ScoreboardManager.getManager().run();
@@ -86,6 +89,9 @@ public class Main extends JavaPlugin {
     @Override
     public void onDisable() {
         super.onDisable();
+        for (Arena arena : ArenaManager.getManager().getArenas()) {
+            arena.end(true);
+        }
     }
 
     private void registerCommand(CommandExecutor commandExecutor, String key) {

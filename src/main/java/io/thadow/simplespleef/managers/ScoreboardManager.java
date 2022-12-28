@@ -193,12 +193,10 @@ public class ScoreboardManager {
             scheduler.scheduleSyncRepeatingTask(Main.getInstance(), () -> {
                 for (SpleefPlayer player : PlayerDataManager.getManager().getSpleefPlayers().values()) {
                     if (player.getArena() == null) {
-                        Bukkit.broadcastMessage("Arena es null");
                         return;
                     }
                     if (player.getArena().getStatus() == Status.ENDING) {
                         updateEndingScoreboard(player);
-                        Bukkit.broadcastMessage("Ending Updated for: " + player.getName());
                     }
                 }
             }, 0, endingUpdate);

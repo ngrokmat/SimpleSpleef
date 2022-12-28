@@ -1,5 +1,6 @@
 package io.thadow.simplespleef.items;
 
+import io.thadow.simplespleef.api.player.SpleefPlayer;
 import io.thadow.simplespleef.arena.Arena;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -16,7 +17,7 @@ public class ItemGiver {
 
     }
 
-    public void giveArenaItems(Player player) {
-
+    public void giveSpectatorItems(SpleefPlayer spleefPlayer) {
+        Player player = spleefPlayer.getPlayer();
     }
 }

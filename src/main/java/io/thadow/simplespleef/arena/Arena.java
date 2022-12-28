@@ -7,6 +7,7 @@ import io.thadow.simplespleef.api.arena.Status;
 import io.thadow.simplespleef.api.arena.TeleportDeathMode;
 import io.thadow.simplespleef.api.player.SpleefPlayer;
 import io.thadow.simplespleef.arena.configuration.ArenaConfiguration;
+import io.thadow.simplespleef.items.ItemBuilder;
 import io.thadow.simplespleef.managers.PlayerDataManager;
 import io.thadow.simplespleef.managers.SignsManager;
 import io.thadow.simplespleef.playerdata.Storage;
@@ -19,6 +20,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -64,7 +66,15 @@ public class Arena {
     @Getter
     List<Block> signs = new ArrayList<>();
     @Getter
-    HashMap<Location, Block> brokenBlocks = new HashMap<>();
+    HashMap<Location, Material> brokenBlocks = new HashMap<>();
+    @Getter
+    List<String> allowedBreakableBlocks;
+    @Getter
+    boolean snowSpecialEnabled, eggSpecialEnabled, bowSpecialEnabled;
+    @Getter
+    int snowSpecialAmount, eggSpecialAmount, arrowSpecialAmount;
+    @Getter
+    HashMap<Integer, ItemStack> items = new HashMap<>();
 
     public Arena(String arenaID) {
         this.arenaID = arenaID;
@@ -75,6 +85,13 @@ public class Arena {
         yLevelMode = configuration.getInt("Death Mode.Y Level Mode.Y Level");
         teleportDeathMode = TeleportDeathMode.valueOf(configuration.getString("Teleport Death Mode.Mode"));
         spleefMode = SpleefMode.valueOf(configuration.getString("Spleef Mode.Mode"));
+        snowSpecialEnabled = configuration.getBoolean("Spleef Mode.Special To Give.Snow.Enabled");
+        eggSpecialEnabled = configuration.getBoolean("Spleef Mode.Special To Give.Egg.Enabled");
+        bowSpecialEnabled = configuration.getBoolean("Spleef Mode.Special To Give.Bow.Enabled");
+        snowSpecialAmount = configuration.getInt("Spleef Mode.Special To Give.Snow.Amount");
+        eggSpecialAmount = configuration.getInt("Spleef Mode.Special To Give.Egg.Amount");
+        arrowSpecialAmount = configuration.getInt("Spleef Mode.Special To Give.Bow.Arrow Amount");
+        allowedBreakableBlocks = configuration.getStringList("Spleef Mode.Allowed Breakable Blocks");
         arenaName = configuration.getString("Arena Name");
         maxPlayers = configuration.getInt("Max Players");
         minPlayers = configuration.getInt("Min Players");
@@ -84,6 +101,25 @@ public class Arena {
         time = configuration.getInt("Wait To Start Time");
         waitLocation = Utils.getLocationFromConfig(configuration, "Wait Location");
         spawnLocation = Utils.getLocationFromConfig(configuration, "Spawn Location");
+
+        for (String key : configuration.getConfigurationSection("Inventory.Items").getKeys(false)) {
+            if (key.startsWith("Slot-")) {
+                int slot = Integer.parseInt(key.replace("Slot-", ""));
+                String material = configuration.getString("Inventory.Items." + key + ".Material");
+                String name = configuration.getString("Inventory.Items." + key + ".Name");
+                boolean unbreakable = configuration.getBoolean("Inventory.Items." + key + ".Unbreakable");
+                int amount = configuration.getInt("Inventory.Items." + key + ".Amount");
+                List<String> lore = configuration.getStringList("Inventory.Items." + key + ".Lore");
+                List<String> enchantments = configuration.getStringList("Inventory.Items." + key + ".Enchantments");
+                ItemBuilder item = new ItemBuilder(Material.valueOf(material), amount);
+                item = item.setDisplayName(name);
+                item = item.setUnbreakable(unbreakable);
+                item = item.setLore(lore);
+                item = item.addEnchantments(enchantments);
+
+                items.put(slot, item.build());
+            }
+        }
 
         if (enabled) {
             setStatus(Status.WAITING);
@@ -101,6 +137,9 @@ public class Arena {
         cooldown.startGameTime(this);
         for (SpleefPlayer player : getTotalPlayers()) {
             player.teleport(spawnLocation);
+            for (int i : items.keySet()) {
+                player.getPlayer().getInventory().setItem((i - 1), items.get(i));
+            }
             player.getPlayer().setGameMode(GameMode.SURVIVAL);
             player.sendMessage("Iniciamos");
         }
@@ -110,6 +149,9 @@ public class Arena {
         if (closingServer) {
             setWinner(null);
             setStatus(Status.DISABLED);
+            for (Location brokenLocation : brokenBlocks.keySet()) {
+                brokenLocation.getWorld().getBlockAt(brokenLocation).setType(brokenBlocks.get(brokenLocation));
+            }
             for (SpleefPlayer player : getTotalPlayers()) {
                 removePlayer(player);
             }
@@ -131,10 +173,13 @@ public class Arena {
             getTotalPlayers().clear();
             setStatus(Status.RESTARTING);
 
+            for (Location brokenLocation : brokenBlocks.keySet()) {
+                brokenLocation.getWorld().getBlockAt(brokenLocation).setType(brokenBlocks.get(brokenLocation));
+            }
+
+            brokenBlocks.clear();
+
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-                for (Location brokenBlock : brokenBlocks.keySet()) {
-                    brokenBlock.getBlock().setType(brokenBlocks.get(brokenBlock).getType());
-                }
                 setWinner(null);
                 time = configuration.getInt("Wait To Start Time");
                 maxTime = configuration.getInt("Max Time");
@@ -169,10 +214,14 @@ public class Arena {
             getSpectatingPlayers().clear();
             getTotalPlayers().clear();
             setStatus(Status.RESTARTING);
+
+            for (Location brokenLocation : brokenBlocks.keySet()) {
+                brokenLocation.getWorld().getBlockAt(brokenLocation).setType(brokenBlocks.get(brokenLocation));
+            }
+
+            brokenBlocks.clear();
+
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-                for (Location brokenBlock : brokenBlocks.keySet()) {
-                    brokenBlock.getBlock().setType(brokenBlocks.get(brokenBlock).getType());
-                }
                 setWinner(null);
                 time = configuration.getInt("Wait To Start Time");
                 maxTime = configuration.getInt("Max Time");
@@ -224,13 +273,13 @@ public class Arena {
         player.getPlayer().setGameMode(GameMode.ADVENTURE);
         player.setArena(this);
         player.setSpectating(false);
+        Utils.getBuilders().remove(player.getPlayer());
         refreshSigns();
         SignsManager.getManager().updateSigns(this);
         checkArena();
     }
 
     public void removePlayer(SpleefPlayer player) {
-        Bukkit.broadcastMessage("Remove executed");
         players.remove(player);
         spectatingPlayers.remove(player);
         player.getPlayer().teleport(player.getPlayer().getWorld().getSpawnLocation());
@@ -247,6 +296,8 @@ public class Arena {
         player.getPlayer().setFlying(false);
         player.getPlayer().setHealth(20.0D);
         player.getPlayer().setFoodLevel(20);
+        player.getPlayer().getInventory().clear();
+        player.getPlayer().getInventory().setArmorContents(null);
         player.getPlayer().removePotionEffect(PotionEffectType.INVISIBILITY);
         if (getStatus() == Status.PLAYING && getPlayers().size() == 0) {
             end(false);
@@ -274,6 +325,8 @@ public class Arena {
         player.getPlayer().setFlying(true);
         player.getPlayer().setHealth(20.0D);
         player.getPlayer().setFoodLevel(20);
+        player.getPlayer().getInventory().clear();
+        player.getPlayer().getInventory().setArmorContents(null);
         player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false));
         if (getPlayers().size() == 0 && status == Status.PLAYING) {
             end(false);

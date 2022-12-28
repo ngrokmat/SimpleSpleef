@@ -27,33 +27,22 @@ public class ArenaConfiguration extends ConfigurationFile {
             configuration.addDefault("Teleport Death Mode.Mode", "SAME_LOCATION");
 
             configuration.addDefault("Spleef Mode.Mode", "SNOW");
-            configuration.addDefault("Spleef Mode.Snow Mode.Special To Give.Snow.Enabled", true);
-            configuration.addDefault("Spleef Mode.Snow Mode.Special To Give.Snow.Amount", 3);
-            configuration.addDefault("Spleef Mode.Snow Mode.Special To Give.Egg.Enabled", false);
-            configuration.addDefault("Spleef Mode.Snow Mode.Special To Give.Egg.Amount", 3);
-            configuration.addDefault("Spleef Mode.Snow Mode.Special To Give.Bow.Enabled", false);
-            configuration.addDefault("Spleef Mode.Snow Mode.Special To Give.Bow.Arrow Amount", 5);
+            configuration.addDefault("Spleef Mode.Special To Give.Snow.Enabled", true);
+            configuration.addDefault("Spleef Mode.Special To Give.Snow.Amount", 3);
+            configuration.addDefault("Spleef Mode.Special To Give.Egg.Enabled", false);
+            configuration.addDefault("Spleef Mode.Special To Give.Egg.Amount", 3);
+            configuration.addDefault("Spleef Mode.Special To Give.Bow.Enabled", false);
+            configuration.addDefault("Spleef Mode.Special To Give.Bow.Arrow Amount", 5);
 
-            configuration.addDefault("Spleef Mode.Wood Mode.Special To Give.Snow.Enabled", false);
-            configuration.addDefault("Spleef Mode.Wood Mode.Special To Give.Snow.Amount", false);
-            configuration.addDefault("Spleef Mode.Wood Mode.Special To Give.Egg.Enabled", true);
-            configuration.addDefault("Spleef Mode.Wood Mode.Special To Give.Egg.Amount", 3);
-            configuration.addDefault("Spleef Mode.Wood Mode.Special To Give.Bow.Enabled", false);
-            configuration.addDefault("Spleef Mode.Wood Mode.Special To Give.Bow.Arrow Amount", 5);
+            configuration.addDefault("Inventory.Items.Slot-1.Material", "DIAMOND_SPADE");
+            configuration.addDefault("Inventory.Items.Slot-1.Name", "&bDiamond Shovel");
+            configuration.addDefault("Inventory.Items.Slot-1.Unbreakable", true);
+            configuration.addDefault("Inventory.Items.Slot-1.Amount", 1);
+            configuration.addDefault("Inventory.Items.Slot-1.Lore", Collections.singletonList(""));
+            configuration.addDefault("Inventory.Items.Slot-1.Enchantments", Collections.singletonList("DIG_SPEED:5"));
 
-            configuration.addDefault("Spleef Mode.Solid Mode.Special To Give.Snow.Enabled", false);
-            configuration.addDefault("Spleef Mode.Solid Mode.Special To Give.Snow.Amount", 3);
-            configuration.addDefault("Spleef Mode.Solid Mode.Special To Give.Egg.Enabled", false);
-            configuration.addDefault("Spleef Mode.Solid Mode.Special To Give.Egg.Amount", 3);
-            configuration.addDefault("Spleef Mode.Solid Mode.Special To Give.Bow.Enabled", true);
-            configuration.addDefault("Spleef Mode.Solid Mode.Special To Give.Bow.Arrow Amount", 5);
 
-            configuration.addDefault("Spleef Mode.Other Mode.Special To Give.Snow.Enabled", false);
-            configuration.addDefault("Spleef Mode.Other Mode.Special To Give.Snow.Amount", 3);
-            configuration.addDefault("Spleef Mode.Other Mode.Special To Give.Egg.Enabled", false);
-            configuration.addDefault("Spleef Mode.Other Mode.Special To Give.Egg.Amount", 3);
-            configuration.addDefault("Spleef Mode.Other Mode.Special To Give.Bow.Enabled", true);
-            configuration.addDefault("Spleef Mode.Other Mode.Special To Give.Bow.Arrow Amount", 5);
+            configuration.addDefault("Spleef Mode.Allowed Breakable Blocks", Collections.singletonList("SNOW"));
 
             configuration.options().copyDefaults(true);
             save();

@@ -253,24 +253,22 @@ public class SignsListener implements Listener {
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             Block block = event.getClickedBlock();
             if (block.getState() instanceof Sign) {
-                for (Arena arena : ArenaManager.getManager().getArenas()) {
-                    Sign sign = (Sign) block.getState();
-                    String toJoin = sign.getLine(0);
-                    Arena arenaToJoin = ArenaManager.getManager().getArenaByNameOrID(toJoin);
-                    if (arenaToJoin == null) {
-                        toJoin = sign.getLine(1);
-                        arenaToJoin = ArenaManager.getManager().getArenaByNameOrID(toJoin);
-                    }
-                    if (arenaToJoin == null) {
-                        toJoin = sign.getLine(2);
-                        arenaToJoin = ArenaManager.getManager().getArenaByNameOrID(toJoin);
-                    }
-                    if (arenaToJoin == null) {
-                        toJoin = sign.getLine(3);
-                        arenaToJoin = ArenaManager.getManager().getArenaByNameOrID(toJoin);
-                    }
-                    ArenaManager.getManager().handleJoin(event.getPlayer(), arenaToJoin);
+                Sign sign = (Sign) block.getState();
+                String toJoin = sign.getLine(0);
+                Arena arenaToJoin = ArenaManager.getManager().getArenaByNameOrID(toJoin);
+                if (arenaToJoin == null) {
+                    toJoin = sign.getLine(1);
+                    arenaToJoin = ArenaManager.getManager().getArenaByNameOrID(toJoin);
                 }
+                if (arenaToJoin == null) {
+                    toJoin = sign.getLine(2);
+                    arenaToJoin = ArenaManager.getManager().getArenaByNameOrID(toJoin);
+                }
+                if (arenaToJoin == null) {
+                    toJoin = sign.getLine(3);
+                    arenaToJoin = ArenaManager.getManager().getArenaByNameOrID(toJoin);
+                }
+                ArenaManager.getManager().handleJoin(event.getPlayer(), arenaToJoin);
             }
         }
     }

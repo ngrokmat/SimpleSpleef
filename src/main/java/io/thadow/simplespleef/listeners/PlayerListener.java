@@ -5,12 +5,18 @@ import io.thadow.simplespleef.arena.Arena;
 import io.thadow.simplespleef.lib.scoreboard.Scoreboard;
 import io.thadow.simplespleef.managers.PlayerDataManager;
 import io.thadow.simplespleef.playerdata.Storage;
+import io.thadow.simplespleef.utils.Utils;
+import org.bukkit.GameMode;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 
 public class PlayerListener implements Listener {
 
@@ -18,6 +24,14 @@ public class PlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Storage.getStorage().createPlayer(event.getPlayer());
         PlayerDataManager.getManager().addSpleefPlayer(event.getPlayer());
+
+        Player player = event.getPlayer();
+        player.getInventory().clear();
+        player.getInventory().setArmorContents(null);
+        player.setHealth(20.0D);
+        player.setFlying(false);
+        player.setAllowFlight(false);
+        player.setGameMode(GameMode.ADVENTURE);
     }
 
     @EventHandler
@@ -40,6 +54,75 @@ public class PlayerListener implements Listener {
         if (event.getEntity() instanceof Player) {
             event.setCancelled(true);
             event.setFoodLevel(20);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerBlockBreak(BlockBreakEvent event) {
+        Player player = event.getPlayer();
+        SpleefPlayer spleefPlayer = PlayerDataManager.getManager().getSpleefPlayer(player);
+        if (!Utils.getBuilders().contains(player) && spleefPlayer.getArena() == null) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerBlockPlace(BlockPlaceEvent event) {
+        Player player = event.getPlayer();
+        SpleefPlayer spleefPlayer = PlayerDataManager.getManager().getSpleefPlayer(player);
+        if (!Utils.getBuilders().contains(player) && spleefPlayer.getArena() == null) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDropItem(PlayerDropItemEvent event) {
+        Player player = event.getPlayer();
+        SpleefPlayer spleefPlayer = PlayerDataManager.getManager().getSpleefPlayer(player);
+        if (!Utils.getBuilders().contains(player) && spleefPlayer.getArena() == null) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+        Player player = event.getPlayer();
+        SpleefPlayer spleefPlayer = PlayerDataManager.getManager().getSpleefPlayer(player);
+        if (!Utils.getBuilders().contains(player) && spleefPlayer.getArena() == null) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        SpleefPlayer spleefPlayer = PlayerDataManager.getManager().getSpleefPlayer(player);
+        if (!Utils.getBuilders().contains(player) && spleefPlayer.getArena() == null) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onDamage(EntityDamageByEntityEvent event) {
+        if (event.getEntity() instanceof Player) {
+            if (event.getEntity().getType() == EntityType.SNOWBALL
+                    || event.getEntity().getType() == EntityType.EGG
+                    || event.getEntity().getType() == EntityType.ARROW) {
+                return;
+            }
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onDamageTaken(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            SpleefPlayer spleefPlayer = PlayerDataManager.getManager().getSpleefPlayer(player);
+            Arena arena = spleefPlayer.getArena();
+            if (arena == null) {
+                event.setCancelled(true);
+            }
         }
     }
 }

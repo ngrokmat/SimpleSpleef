@@ -2,6 +2,7 @@ Items:
   Slot-1:
     Material: DIAMOND_SHOVEL
     Name: "&bDiamond Shovel"
+    Unbreakable: true
     Amount: 1
     Lore:
       - ""
