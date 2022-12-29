@@ -12,7 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -21,6 +21,7 @@ import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -69,24 +70,7 @@ public class ArenaListener implements Listener {
     }
 
     @EventHandler
-    public void checkDamageTakenDeathMode(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player) {
-            Player player = (Player) event.getEntity();
-            SpleefPlayer spleefPlayer = PlayerDataManager.getManager().getSpleefPlayer(player);
-            if (spleefPlayer.isSpectating()) {
-                return;
-            }
-            Arena arena = spleefPlayer.getArena();
-            if (arena != null) {
-                if (arena.getDeathMode().equals(DeathMode.DAMAGE_TAKEN) && arena.getStatus() == Status.PLAYING) {
-                    arena.killPlayer(spleefPlayer);
-                }
-            }
-        }
-    }
-
-    @EventHandler
-    public void preventDamage(EntityDamageEvent event) {
+    public void preventDamageInStatus(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
             SpleefPlayer spleefPlayer = PlayerDataManager.getManager().getSpleefPlayer(player);
@@ -94,32 +78,76 @@ public class ArenaListener implements Listener {
             if (arena == null) {
                 return;
             }
-            if (arena.getStatus() == Status.WAITING || arena.getStatus() == Status.ENDING || arena.getStatus() == Status.STARTING) {
+            if (arena.getStatus() == Status.WAITING
+            || arena.getStatus() == Status.ENDING
+            || arena.getStatus() == Status.STARTING) {
                 event.setCancelled(true);
             }
         }
     }
 
     @EventHandler
-    public void preventPlayerDamageToOthers(EntityDamageByEntityEvent event) {
+    public void preventDamagePlaying(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            SpleefPlayer spleefPlayer = PlayerDataManager.getManager().getSpleefPlayer(player);
+            Arena arena = spleefPlayer.getArena();
+            if (arena == null) {
+                return;
+            }
+            if (arena.getStatus() == Status.PLAYING) {
+                EntityDamageEvent.DamageCause cause = event.getCause();
+                if (cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) {
+                    event.setCancelled(true);
+                }
+                if (cause == EntityDamageEvent.DamageCause.CONTACT) {
+                    event.setCancelled(true);
+                }
+                if (cause == EntityDamageEvent.DamageCause.FALL) {
+                    event.setCancelled(true);
+                }
+                if (cause == EntityDamageEvent.DamageCause.DROWNING) {
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void checkDamage(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
             Player damager = (Player) event.getDamager();
             SpleefPlayer spleefDamager = PlayerDataManager.getManager().getSpleefPlayer(damager);
+            Player victim = (Player) event.getEntity();
+            SpleefPlayer spleefVictim = PlayerDataManager.getManager().getSpleefPlayer(victim);
+            if (damager.getName().equalsIgnoreCase(victim.getName())) {
+                event.setCancelled(true);
+                return;
+            }
             if (spleefDamager.isSpectating() && spleefDamager.getArena() != null) {
                 event.setCancelled(true);
                 return;
             }
-            Player victim = (Player) event.getEntity();
-            SpleefPlayer spleefVictim = PlayerDataManager.getManager().getSpleefPlayer(victim);
             if (spleefVictim.isSpectating() && spleefVictim.getArena() != null) {
                 event.setCancelled(true);
-                return;
             }
-            if (event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK && spleefVictim.getArena() != null) {
+            if (spleefDamager.getArena() == spleefVictim.getArena()) {
                 event.setCancelled(true);
             }
         }
+        if (event.getDamager() instanceof Snowball) {
+            event.setDamage(0.01D);
+            return;
+        }
+        if (event.getDamager() instanceof Arrow) {
+            event.setDamage(0.01D);
+            return;
+        }
+        if (event.getDamager() instanceof Egg) {
+            event.setDamage(0.01D);
+        }
     }
+
 
     @EventHandler
     public void checkBrokenBlocks(BlockBreakEvent event) {
@@ -156,10 +184,8 @@ public class ArenaListener implements Listener {
                 event.getBlock().getDrops().clear();
                 arena.getBrokenBlocks().put(block.getLocation(), block.getType());
                 event.getBlock().getLocation().getWorld().getBlockAt(block.getLocation()).setType(Material.AIR);
-                event.setCancelled(true);
-            } else {
-                event.setCancelled(true);
             }
+            event.setCancelled(true);
         }
     }
 }

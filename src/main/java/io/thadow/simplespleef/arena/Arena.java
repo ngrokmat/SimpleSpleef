@@ -8,6 +8,7 @@ import io.thadow.simplespleef.api.arena.TeleportDeathMode;
 import io.thadow.simplespleef.api.player.SpleefPlayer;
 import io.thadow.simplespleef.arena.configuration.ArenaConfiguration;
 import io.thadow.simplespleef.items.ItemBuilder;
+import io.thadow.simplespleef.lib.titles.Titles;
 import io.thadow.simplespleef.managers.PlayerDataManager;
 import io.thadow.simplespleef.managers.SignsManager;
 import io.thadow.simplespleef.playerdata.Storage;
@@ -141,7 +142,27 @@ public class Arena {
                 player.getPlayer().getInventory().setItem((i - 1), items.get(i));
             }
             player.getPlayer().setGameMode(GameMode.SURVIVAL);
-            player.sendMessage("Iniciamos");
+        }
+        List<String> message = Main.getConfiguration().getStringList("Messages.Arenas.Started.Message");
+        message = Utils.format(message);
+        for (String line : message) {
+            broadcast(line);
+        }
+        if (Main.getConfiguration().getBoolean("Messages.Arenas.Started.Sound.Enabled")) {
+            String soundPath = Main.getConfiguration().getString("Messages.Arenas.Started.Sound.Sound");
+            for (SpleefPlayer player : getTotalPlayers()) {
+                Utils.playSound(player.getPlayer(), soundPath);
+            }
+        }
+        if (Main.getConfiguration().getBoolean("Messages.Arenas.Started.Titles.Enabled")) {
+            String title = Main.getConfiguration().getString("Messages.Arenas.Started.Titles.Title");
+            String subTitle = Main.getConfiguration().getString("Messages.Arenas.Started.Titles.Sub Title");
+            int fadeIn = Main.getConfiguration().getInt("Messages.Arenas.Started.Titles Settings.Fade In");
+            int stay = Main.getConfiguration().getInt("Messages.Arenas.Started.Titles Settings.Stay");
+            int fadeOut = Main.getConfiguration().getInt("Messages.Arenas.Started.Titles Settings.Fade Out");
+            for (SpleefPlayer player : getTotalPlayers()) {
+                Titles.sendTitle(player.getPlayer(), fadeIn, stay, fadeOut, title, subTitle);
+            }
         }
     }
 
@@ -232,7 +253,7 @@ public class Arena {
 
     public void checkArena() {
         if (getStatus() != Status.STARTING) {
-            if (players.size() >= minPlayers) {
+            if (players.size() > minPlayers) {
                 ArenaCooldown cooldown = new ArenaCooldown();
                 cooldown.start(this);
                 setStatus(Status.STARTING);

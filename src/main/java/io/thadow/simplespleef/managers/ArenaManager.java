@@ -2,8 +2,10 @@ package io.thadow.simplespleef.managers;
 
 import io.thadow.simplespleef.Main;
 import io.thadow.simplespleef.api.arena.Status;
+import io.thadow.simplespleef.api.party.Party;
 import io.thadow.simplespleef.api.player.SpleefPlayer;
 import io.thadow.simplespleef.arena.Arena;
+import io.thadow.simplespleef.utils.Utils;
 import lombok.Getter;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.ChatColor;
@@ -66,9 +68,13 @@ public class ArenaManager {
             player.sendMessage("Ya estas en una arena!");
             return false;
         }
-        if (arena.getWaitLocation() == null) {
-            player.sendMessage("Unable to locate the WaitLocation");
-            return false;
+        if (PartyManager.getManager().hasParty(player)) {
+            Party party = PartyManager.getManager().getPlayerParty(player);
+            if (!party.isLeader(player)) {
+                String message = Utils.getMessage("Messages.Commands.Party Command.Only Leader");
+                player.sendMessage(message);
+                return false;
+            }
         }
         if (arena.getStatus() == Status.DISABLED || !arena.isEnabled()) {
             player.sendMessage("La arena esta desactivada");
@@ -90,7 +96,23 @@ public class ArenaManager {
             player.sendMessage("La arena esta llena!");
             return false;
         }
-        arena.addPlayer(PlayerDataManager.getManager().getSpleefPlayer(player));
+        if (PartyManager.getManager().hasParty(player)) {
+            Party party = PartyManager.getManager().getPlayerParty(player);
+            int size = party.getSize();
+            int arenaPlayerSize = arena.getTotalPlayersSize();
+            if ((arenaPlayerSize + size) > arena.getMaxPlayers()) {
+                String message = Utils.getMessage("Messages.Arenas.Not Enough Space");
+                player.sendMessage(message);
+                return false;
+            } else {
+                for (Player member : party.getMembers()) {
+                    arena.addPlayer(PlayerDataManager.getManager().getSpleefPlayer(member));
+                }
+            }
+            return true;
+        } else {
+            arena.addPlayer(PlayerDataManager.getManager().getSpleefPlayer(player));
+        }
         return true;
     }
 

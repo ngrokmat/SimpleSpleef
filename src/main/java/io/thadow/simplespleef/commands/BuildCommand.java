@@ -18,15 +18,18 @@ public class BuildCommand implements CommandExecutor {
             if (player.hasPermission("simplespleef.commands.build")) {
                 Arena arena = PlayerDataManager.getManager().getSpleefPlayer(player).getArena();
                 if (arena != null) {
-                    player.sendMessage("Este comando no puede ser usado dentro de una arena!");
+                    String message = Utils.getMessage("Messages.Commands.Build Command.Can't Use In Arena");
+                    player.sendMessage(message);
                     return true;
                 }
                 if (Utils.getBuilders().contains(player)) {
                     Utils.getBuilders().remove(player);
-                    player.sendMessage("Modo construcción desactivado!");
+                    String message = Utils.getMessage("Messages.Commands.Build Command.Build Mode Enabled");
+                    player.sendMessage(message);
                 } else {
                     Utils.getBuilders().add(player);
-                    player.sendMessage("Modo construcción activado!");
+                    String message = Utils.getMessage("Messages.Commands.Build Command.Build Mode Disabled");
+                    player.sendMessage(message);
                 }
             }
         }

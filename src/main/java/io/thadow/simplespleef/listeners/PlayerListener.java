@@ -1,8 +1,10 @@
 package io.thadow.simplespleef.listeners;
 
+import io.thadow.simplespleef.api.party.Party;
 import io.thadow.simplespleef.api.player.SpleefPlayer;
 import io.thadow.simplespleef.arena.Arena;
 import io.thadow.simplespleef.lib.scoreboard.Scoreboard;
+import io.thadow.simplespleef.managers.PartyManager;
 import io.thadow.simplespleef.managers.PlayerDataManager;
 import io.thadow.simplespleef.playerdata.Storage;
 import io.thadow.simplespleef.utils.Utils;
@@ -36,6 +38,18 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        if (PartyManager.getManager().hasParty(player)) {
+            Party party = PartyManager.getManager().getPlayerParty(player);
+            if (party.isLeader(player)) {
+                PartyManager.getManager().disbandParty(party);
+                return;
+            }
+            party.removeMember(player);
+            for (Player member : party.getMembers()) {
+                member.sendMessage(player.getName() + " ha salido de la party!");
+            }
+        }
         if (Scoreboard.scoreboards.containsKey(event.getPlayer().getUniqueId())) {
             Scoreboard scoreboard = Scoreboard.scoreboards.get(event.getPlayer().getUniqueId());
             scoreboard.delete();
@@ -98,18 +112,6 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         SpleefPlayer spleefPlayer = PlayerDataManager.getManager().getSpleefPlayer(player);
         if (!Utils.getBuilders().contains(player) && spleefPlayer.getArena() == null) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onDamage(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Player) {
-            if (event.getEntity().getType() == EntityType.SNOWBALL
-                    || event.getEntity().getType() == EntityType.EGG
-                    || event.getEntity().getType() == EntityType.ARROW) {
-                return;
-            }
             event.setCancelled(true);
         }
     }

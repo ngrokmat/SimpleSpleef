@@ -130,11 +130,12 @@ public class MainCommand implements CommandExecutor {
                     }
                     arena.setSpawnLocation(player.getLocation());
                     return true;
-                }
-                List<String> usageMessage = Main.getConfiguration().getStringList("Messages.Commands.Main Command.Usage");
-                usageMessage = Utils.format(usageMessage);
-                for (String line : usageMessage) {
-                    player.sendMessage(line);
+                } else {
+                    List<String> usageMessage = Main.getConfiguration().getStringList("Messages.Commands.Main Command.Usage");
+                    usageMessage = Utils.format(usageMessage);
+                    for (String line : usageMessage) {
+                        player.sendMessage(line);
+                    }
                 }
             }
         }

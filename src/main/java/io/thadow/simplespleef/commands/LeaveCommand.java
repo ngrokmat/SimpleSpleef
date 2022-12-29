@@ -4,6 +4,7 @@ import io.thadow.simplespleef.api.playerdata.PlayerData;
 import io.thadow.simplespleef.arena.Arena;
 import io.thadow.simplespleef.managers.ArenaManager;
 import io.thadow.simplespleef.managers.PlayerDataManager;
+import io.thadow.simplespleef.utils.Utils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,10 +19,11 @@ public class LeaveCommand implements CommandExecutor {
             if (player.hasPermission("simplespleef.commands.leave")) {
                 Arena playerArena = PlayerDataManager.getManager().getSpleefPlayer(player).getArena();
                 if (playerArena == null) {
-                    player.sendMessage("Este comando solo se puede ejecutar en arena!");
+                    String message = Utils.getMessage("Messages.Commands.Leave Command.Only In Arena");
+                    player.sendMessage(message);
                     return true;
                 }
-                playerArena.removePlayer(PlayerDataManager.getManager().getSpleefPlayer(player));
+                ArenaManager.getManager().handleLeave(PlayerDataManager.getManager().getSpleefPlayer(player), playerArena);
             }
         }
         return false;

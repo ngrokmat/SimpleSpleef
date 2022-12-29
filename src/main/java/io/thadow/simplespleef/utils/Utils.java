@@ -1,11 +1,9 @@
 package io.thadow.simplespleef.utils;
 
+import io.thadow.simplespleef.Main;
 import io.thadow.simplespleef.api.configuration.ConfigurationFile;
 import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -13,7 +11,7 @@ import java.util.List;
 
 public class Utils {
     @Getter
-    private static List<Player> builders = new ArrayList<>();
+    private static final List<Player> builders = new ArrayList<>();
 
     public static String format(String s) {
         return ChatColor.translateAlternateColorCodes('&', s);
@@ -26,6 +24,23 @@ public class Utils {
             newLs.add(line);
         }
         return newLs;
+    }
+
+    public static String getMessage(String path) {
+        String message = Main.getConfiguration().getString(path);
+        return format(message);
+    }
+
+    public static void playSound(Player player, String path) {
+        String[] split = path.split(":");
+        try {
+            Sound sound = Sound.valueOf(split[0]);
+            int volume = Integer.parseInt(split[1]);
+            float pitch = Float.parseFloat(split[2]);
+            player.playSound(player.getLocation(), sound, volume, pitch);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
     }
 
     public static String getFormattedTime(int time) {

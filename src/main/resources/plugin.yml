@@ -16,3 +16,6 @@ commands:
     description: Leave command.
   build:
     description: Build command.
+  party:
+    aliases: [fiesta]
+    description: Party command.
