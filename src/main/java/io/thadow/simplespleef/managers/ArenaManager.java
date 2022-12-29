@@ -105,6 +105,17 @@ public class ArenaManager {
                 player.sendMessage(message);
                 return false;
             } else {
+                boolean anyInArena = false;
+                for (Player member : party.getMembers()) {
+                    if (PlayerDataManager.getManager().getSpleefPlayer(member).getArena().getStatus() == Status.PLAYING) {
+                        anyInArena = true;
+                    }
+                }
+                if (anyInArena) {
+                    String message = Utils.getMessage("Messages.Arenas.Party Member In Game");
+                    player.sendMessage(message);
+                    return true;
+                }
                 for (Player member : party.getMembers()) {
                     arena.addPlayer(PlayerDataManager.getManager().getSpleefPlayer(member));
                 }

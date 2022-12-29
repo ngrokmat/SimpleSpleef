@@ -43,6 +43,18 @@ public class Utils {
         }
     }
 
+    public static boolean isPlayer(String name) {
+        Player target = Bukkit.getPlayer(name);
+        if (target == null) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (player.getName().equalsIgnoreCase(name)) {
+                    return true;
+                }
+            }
+        }
+        return true;
+    }
+
     public static String getFormattedTime(int time) {
         int minutes = time / 60;
         int seconds = time - (minutes * 60);

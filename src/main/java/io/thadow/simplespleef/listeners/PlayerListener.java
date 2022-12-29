@@ -47,7 +47,9 @@ public class PlayerListener implements Listener {
             }
             party.removeMember(player);
             for (Player member : party.getMembers()) {
-                member.sendMessage(player.getName() + " ha salido de la party!");
+                String lmessage = Utils.getMessage("Messages.Commands.Party Command.Player Left");
+                lmessage = lmessage.replace("%target%", player.getName());
+                member.sendMessage(lmessage);
             }
         }
         if (Scoreboard.scoreboards.containsKey(event.getPlayer().getUniqueId())) {

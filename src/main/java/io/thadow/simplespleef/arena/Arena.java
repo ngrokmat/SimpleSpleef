@@ -15,6 +15,7 @@ import io.thadow.simplespleef.playerdata.Storage;
 import io.thadow.simplespleef.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -133,6 +134,7 @@ public class Arena {
     }
 
     public void start() {
+        setWinner(null);
         setStatus(Status.PLAYING);
         ArenaCooldown cooldown = new ArenaCooldown();
         cooldown.startGameTime(this);
@@ -170,11 +172,11 @@ public class Arena {
         if (closingServer) {
             setWinner(null);
             setStatus(Status.DISABLED);
-            for (Location brokenLocation : brokenBlocks.keySet()) {
-                brokenLocation.getWorld().getBlockAt(brokenLocation).setType(brokenBlocks.get(brokenLocation));
-            }
             for (SpleefPlayer player : getTotalPlayers()) {
                 removePlayer(player);
+            }
+            for (Location brokenLocation : brokenBlocks.keySet()) {
+                brokenLocation.getWorld().getBlockAt(brokenLocation).setType(brokenBlocks.get(brokenLocation));
             }
             return;
         }
@@ -253,7 +255,7 @@ public class Arena {
 
     public void checkArena() {
         if (getStatus() != Status.STARTING) {
-            if (players.size() > minPlayers) {
+            if (players.size() >= minPlayers) {
                 ArenaCooldown cooldown = new ArenaCooldown();
                 cooldown.start(this);
                 setStatus(Status.STARTING);
@@ -298,11 +300,19 @@ public class Arena {
         refreshSigns();
         SignsManager.getManager().updateSigns(this);
         checkArena();
+        String message = Utils.getMessage("Messages.Arenas.Player Join");
+        message = message.replace("%player%", player.getName());
+        message = message.replace("%current%", String.valueOf(getTotalPlayersSize()));
+        message = message.replace("%max%", String.valueOf(getMaxPlayers()));
+        broadcast(message);
     }
 
     public void removePlayer(SpleefPlayer player) {
         players.remove(player);
         spectatingPlayers.remove(player);
+        String message = Utils.getMessage("Messages.Arenas.Player Leave");
+        message = message.replace("%player%", player.getName());
+        broadcast(message);
         player.getPlayer().teleport(player.getPlayer().getWorld().getSpawnLocation());
         for (Player players : Bukkit.getOnlinePlayers()) {
             if (player.isSpectating()) {
@@ -349,6 +359,9 @@ public class Arena {
         player.getPlayer().getInventory().clear();
         player.getPlayer().getInventory().setArmorContents(null);
         player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false));
+        String message = Utils.getMessage("Messages.Arenas.Player Death");
+        message = message.replace("%player%", player.getName());
+        broadcast(message);
         if (getPlayers().size() == 0 && status == Status.PLAYING) {
             end(false);
             return;

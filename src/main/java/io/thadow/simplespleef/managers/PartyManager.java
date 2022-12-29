@@ -31,9 +31,12 @@ public class PartyManager {
         return null;
     }
 
-    public void createParty(Player leader) {
+    public void createParty(Player leader, boolean silent) {
         Party party = new Party(leader);
         parties.add(party);
+        if (silent) {
+            return;
+        }
         String message = Utils.getMessage("Messages.Commands.Party Command.Party Created");
         leader.sendMessage(message);
     }

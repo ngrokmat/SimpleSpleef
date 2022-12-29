@@ -44,7 +44,14 @@ public class MainConfiguration extends ConfigurationFile {
 
             configuration.addDefault("Configuration.Arenas.Nobody", "Nobody");
 
+            configuration.addDefault("Messages.Arenas.Party Member In Game", "&6&lParty &8&l>> &cUno de los integrantes de la arena sigue en juego!");
+
             configuration.addDefault("Messages.Arenas.Not Enough Space", "&6&lParty &8&l>> &cNo hay espacio suficiente para los integrantes de tu fiesta.");
+
+            configuration.addDefault("Messages.Arenas.Player Join", "&7%player% &ese ha unido (&b%current%&e/%b%max%");
+            configuration.addDefault("Messages.Arenas.Player Leave", "&7%player% &eha salido!");
+            configuration.addDefault("Messages.Arenas.Player Death", "&7%player% &cha muerto!");
+
             configuration.addDefault("Messages.Arenas.Starting.Starting In", "&eIniciando en &a%time% &esegundos");
             configuration.addDefault("Messages.Arenas.Starting.Titles Settings.Fade In", 10);
             configuration.addDefault("Messages.Arenas.Starting.Titles Settings.Stay", 20);
@@ -121,8 +128,10 @@ public class MainConfiguration extends ConfigurationFile {
             partyUsage.add("&e/party kick (player) &7- Expulsar a un jugador.");
             partyUsage.add("&e/party leader (player) &7- Dar el lider a otro jugador.");
             partyUsage.add("&e/party leave &7- Salir de la fiesta");
+            partyUsage.add("&7&m---------------------------------------------------");
             configuration.addDefault("Messages.Commands.Party Command.Usage", partyUsage);
 
+            configuration.addDefault("Messages.Commands.Party Command.Can't Use In Game", "&6&lParty &8&l>> &cNo puedes usar este comando estando en una arena!");
             configuration.addDefault("Messages.Commands.Party Command.Player Offline", "&6&lParty &8&l>> &e%target% &cno esta conectado!");
             configuration.addDefault("Messages.Commands.Party Command.Already In Party", "&6&lParty &8&l>> &aYa te estas en una party!");
             configuration.addDefault("Messages.Commands.Party Command.Not In Party", "&6&lParty &8&l>> &c¡No te encuentras en una fiesta!");
@@ -137,6 +146,7 @@ public class MainConfiguration extends ConfigurationFile {
             configuration.addDefault("Messages.Commands.Party Command.Not Invited", "&6&lParty &8&l>> &e%target% &cno te ha invitado a su fiesta.");
             configuration.addDefault("Messages.Commands.Party Command.Not Leader", "&6&lParty &8&l>> &e%target% &cno es el lider de su fiesta.");
             configuration.addDefault("Messages.Commands.Party Command.No Party Invited", "&6&lParty &8&l>> &e%target% &cno tiene una fiesta!");
+            configuration.addDefault("Messages.Commands.Party Command.Can't Invite Self", "&6&lParty &8&l>> &cNo puedes invitarte a ti mismo!");
             configuration.addDefault("Messages.Commands.Party Command.Invited Already In Party", "&6&lParty &8&l>> &e%target% &cya se encuentra en una fiesta.");
             configuration.addDefault("Messages.Commands.Party Command.Party Full", "&6&lParty &8&l>> &cLa fiesta esta llena.");
             configuration.addDefault("Messages.Commands.Party Command.Invite Sent", "&6&lParty &8&l>> &aInvitación enviada!");
@@ -144,6 +154,7 @@ public class MainConfiguration extends ConfigurationFile {
             configuration.addDefault("Messages.Commands.Party Command.Invite Message Hover", "&aClick to join!");
             configuration.addDefault("Messages.Commands.Party Command.Invite Expired", "&6&lParty &8&l>> &eLa invitación de &6%from% &eha expirado.");
             configuration.addDefault("Messages.Commands.Party Command.Kick Usage", "&6&lParty &8&l>> &e/party kick (player)");
+            configuration.addDefault("Messages.Commands.Party Command.Can't Kick Self", "&6&lParty &8&l>> &cNo puedes expulsarte a ti mismo.");
             configuration.addDefault("Messages.Commands.Patty Command.Kick Message", "&6&lParty &8&l>> &cHas sido expulsado de la fiesta.");
             configuration.addDefault("Messages.Commands.Party Command.Player Kicked", "&6&lParty &8&l>> &e%target% ha sido expulsado de la fiesta.");
             configuration.addDefault("Messages.Commands.Party Command.Leader Usage", "&6&lParty &8&l>> &e/party leader (player)");

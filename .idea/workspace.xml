@@ -9,26 +9,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="af7f7854-827d-4cfe-abf5-694ba6d4f010" name="Default Changelist" comment="Update - 6">
-      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/party/Party.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/party/PartyPrivacy.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/PartyCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/managers/PartyManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/SimpleSpleef.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/SimpleSpleef_1_0.xml" afterDir="false" />
+    <list default="true" id="af7f7854-827d-4cfe-abf5-694ba6d4f010" name="Default Changelist" comment="Update - 7">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/arena/DeathMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/arena/DeathMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/Arena.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/Arena.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/ArenaCooldown.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/ArenaCooldown.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/BuildCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/BuildCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/JoinCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/JoinCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/LeaveCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/LeaveCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/MainCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/MainCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/ArenaListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/ArenaListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/PartyCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/PartyCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/PlayerListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/PlayerListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/managers/ArenaManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/managers/ArenaManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/managers/PartyManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/managers/PartyManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/Utils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/configuration/MainConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/configuration/MainConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,7 +121,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672216953752</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Update - 7">
+      <created>1672283100910</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1672283100910</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -165,6 +162,7 @@
     <MESSAGE value="Update - 4" />
     <MESSAGE value="Update - 5" />
     <MESSAGE value="Update - 6" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update - 6" />
+    <MESSAGE value="Update - 7" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update - 7" />
   </component>
 </project>

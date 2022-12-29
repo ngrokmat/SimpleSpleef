@@ -3,10 +3,8 @@ package io.thadow.simplespleef.arena;
 import io.thadow.simplespleef.Main;
 import io.thadow.simplespleef.api.arena.Status;
 import io.thadow.simplespleef.api.player.SpleefPlayer;
-import io.thadow.simplespleef.api.playerdata.PlayerData;
 import io.thadow.simplespleef.lib.titles.Titles;
 import io.thadow.simplespleef.utils.Utils;
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -18,11 +16,6 @@ public class ArenaCooldown {
     public void start(Arena arena) {
         this.arena = arena;
         this.time = arena.getTime();
-        if (arena.getStatus() != Status.STARTING) {
-            String message = Utils.getMessage("Messages.Arenas.Starting.Starting In");
-            message = message.replace("%time%", String.valueOf(time));
-            arena.broadcast(message);
-        }
 
         BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
         taskID = scheduler.scheduleSyncRepeatingTask(Main.getInstance(), () -> {
@@ -52,7 +45,9 @@ public class ArenaCooldown {
                 }
                 if (Main.getConfiguration().getBoolean("Messages.Arenas.Starting.Announce.Second " + time + ".Titles.Enabled")) {
                     String title = Main.getConfiguration().getString("Messages.Arenas.Starting.Announce.Second " + time + ".Titles.Title");
+                    title = title.replace("%time%", String.valueOf(time));
                     String subTitle = Main.getConfiguration().getString("Messages.Arenas.Starting.Announce.Second " + time + ".Titles.Sub Title");
+                    subTitle = subTitle.replace("%time%", String.valueOf(time));
                     int fadeIn = Main.getConfiguration().getInt("Messages.Arenas.Starting.Titles Settings.Fade In");
                     int stay = Main.getConfiguration().getInt("Messages.Arenas.Starting.Titles Settings.Stay");
                     int fadeOut = Main.getConfiguration().getInt("Messages.Arenas.Starting.Titles Settings.Fade Out");

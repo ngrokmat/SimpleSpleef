@@ -4,6 +4,7 @@ import io.thadow.simplespleef.Main;
 import io.thadow.simplespleef.api.party.Party;
 import io.thadow.simplespleef.api.party.PartyPrivacy;
 import io.thadow.simplespleef.managers.PartyManager;
+import io.thadow.simplespleef.managers.PlayerDataManager;
 import io.thadow.simplespleef.utils.Utils;
 import net.md_5.bungee.api.chat.*;
 import org.bukkit.Bukkit;
@@ -12,14 +13,61 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public class PartyCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
-                player.sendMessage("Usage");
+            if (PlayerDataManager.getManager().getSpleefPlayer(player).getArena() != null) {
+                String message = Utils.getMessage("Messages.Commands.Party Command.Can't Use In Game");
+                player.sendMessage(message);
+                return true;
+            }
+            if (args.length == 1
+            && !args[0].equalsIgnoreCase("public")
+            && !args[0].equalsIgnoreCase("private")
+            && !args[0].equalsIgnoreCase("create")
+            && !args[0].equalsIgnoreCase("leave")
+            && !args[0].equalsIgnoreCase("publica")
+            && !args[0].equalsIgnoreCase("privada")
+            && !args[0].equalsIgnoreCase("crear")
+            && !args[0].equalsIgnoreCase("salir")) {
+                if (args[0].equalsIgnoreCase("accept") || args[0].equalsIgnoreCase("aceptar")) {
+                    String message = Utils.getMessage("Messages.Commands.Party Command.Accept Usage");
+                    player.sendMessage(message);
+                    return true;
+                }
+                if (args[0].equalsIgnoreCase("invite") || args[0].equalsIgnoreCase("invitar")) {
+                    String message = Utils.getMessage("Messages.Commands.Party Command.Invite Usage");
+                    player.sendMessage(message);
+                    return true;
+                }
+                if (args[0].equalsIgnoreCase("kick") || args[0].equalsIgnoreCase("expulsar")) {
+                    String message = Utils.getMessage("Messages.Commands.Party Command.Kick Usage");
+                    player.sendMessage(message);
+                    return true;
+                }
+                if (args[0].equalsIgnoreCase("leader") || args[0].equalsIgnoreCase("lider")) {
+                    String message = Utils.getMessage("Messages.Commands.Party Command.Leader Usage");
+                    player.sendMessage(message);
+                    return true;
+                }
+                if (Utils.isPlayer(args[0])) {
+                    Party party = PartyManager.getManager().getPlayerParty(player);
+                    if (party == null) {
+                        PartyManager.getManager().createParty(player, true);
+                    }
+                    Bukkit.dispatchCommand(player, "party invite " + args[0]);
+                }
+            } else if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
+                List<String> usageMessage = Main.getConfiguration().getStringList("Messages.Commands.Party Command.Usage");
+                usageMessage = Utils.format(usageMessage);
+                for (String line : usageMessage) {
+                    player.sendMessage(line);
+                }
                 return true;
             } else if (args[0].equalsIgnoreCase("public") || args[0].equalsIgnoreCase("publica")) {
                 if (player.hasPermission("simplespleef.commands.party.privacy")) {
@@ -72,15 +120,10 @@ public class PartyCommand implements CommandExecutor {
                         player.sendMessage(message);
                         return true;
                     }
-                    PartyManager.getManager().createParty(player);
+                    PartyManager.getManager().createParty(player, false);
                 }
             } else if (args[0].equalsIgnoreCase("accept") || args[0].equalsIgnoreCase("aceptar")) {
                 if (player.hasPermission("simplespleef.commands.party.accept")) {
-                    if (args.length == 1) {
-                        String message = Utils.getMessage("Messages.Commands.Party Command.Accept Usage");
-                        player.sendMessage(message);
-                        return true;
-                    }
                     if (PartyManager.getManager().hasParty(player)) {
                         String message = Utils.getMessage("Messages.Commands.Party Command.Already In Party");
                         player.sendMessage(message);
@@ -135,11 +178,6 @@ public class PartyCommand implements CommandExecutor {
                 }
             }  else if (args[0].equalsIgnoreCase("invite") || args[0].equalsIgnoreCase("invitar")) {
                 if (player.hasPermission("simplespleef.commands.party.invite")) {
-                    if (args.length == 1) {
-                        String message = Utils.getMessage("Messages.Commands.Party Command.Invite Usage");
-                        player.sendMessage(message);
-                        return true;
-                    }
                     if (!PartyManager.getManager().hasParty(player)) {
                         String message = Utils.getMessage("Messages.Commands.Party Command.Not In Party");
                         player.sendMessage(message);
@@ -155,6 +193,11 @@ public class PartyCommand implements CommandExecutor {
                     if (target == null) {
                         String message = Utils.getMessage("Messages.Commands.Party Command.Player Offline");
                         message = message.replace("%target%", args[1]);
+                        player.sendMessage(message);
+                        return true;
+                    }
+                    if (target == player) {
+                        String message = Utils.getMessage("Messages.Commands.Party Command.Can't Invite Self");
                         player.sendMessage(message);
                         return true;
                     }
@@ -182,9 +225,10 @@ public class PartyCommand implements CommandExecutor {
                     inviteMessage = inviteMessage.replace("%from%", player.getName());
                     inviteMessage = inviteMessage.replace("%time%", String.valueOf(expireTime));
                     String hoverMessage = Utils.getMessage("Messages.Commands.Party Command.Invite Message Hover");
-                    TextComponent component = new TextComponent(inviteMessage);
+                    TextComponent component = new TextComponent();
                     component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hoverMessage).create()));
                     component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party accept " + player.getName()));
+                    component.setText(Utils.format(inviteMessage));
                     target.spigot().sendMessage(component);
                     Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
                         if (!PartyManager.getManager().getPartyInvites().containsKey(player.getUniqueId())) {
@@ -200,11 +244,6 @@ public class PartyCommand implements CommandExecutor {
                 }
             } else if (args[0].equalsIgnoreCase("kick") || args[0].equalsIgnoreCase("expulsar")) {
                 if (player.hasPermission("simplespleef.commands.party.kick")) {
-                    if (args.length == 1) {
-                        String message = Utils.getMessage("Messages.Commands.Party Command.Kick Usage");
-                        player.sendMessage(message);
-                        return true;
-                    }
                     if (!PartyManager.getManager().hasParty(player)) {
                         String message = Utils.getMessage("Messages.Commands.Party Command.Not In Party");
                         player.sendMessage(message);
@@ -220,6 +259,11 @@ public class PartyCommand implements CommandExecutor {
                     if (target == null) {
                         String message = Utils.getMessage("Messages.Commands.Party Command.Player Offline");
                         message = message.replace("%target%", args[1]);
+                        player.sendMessage(message);
+                        return true;
+                    }
+                    if (target == player) {
+                        String message = Utils.getMessage("Messages.Commands.Party Command.Can't Kick Self");
                         player.sendMessage(message);
                         return true;
                     }
@@ -240,18 +284,13 @@ public class PartyCommand implements CommandExecutor {
                 }
             } else if (args[0].equalsIgnoreCase("leader") || args[0].equalsIgnoreCase("lider")) {
                 if (player.hasPermission("simplespleef.commands.party.leader")) {
-                    if (args.length == 1) {
-                        String message = Utils.getMessage("Messages.Commands.Party Command.Leader Usage");
-                        player.sendMessage(message);
-                        return true;
-                    }
                     if (!PartyManager.getManager().hasParty(player)) {
                         String message = Utils.getMessage("Messages.Commands.Party Command.Not In Party");
                         player.sendMessage(message);
                         return true;
                     }
                     Party party = PartyManager.getManager().getPlayerParty(player);
-                    if (party.isLeader(player)) {
+                    if (!party.isLeader(player)) {
                         String message = Utils.getMessage("Messages.Commands.Party Command.Only Leader");
                         player.sendMessage(message);
                         return true;
