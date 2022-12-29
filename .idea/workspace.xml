@@ -9,14 +9,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="af7f7854-827d-4cfe-abf5-694ba6d4f010" name="Default Changelist" comment="Update - 7">
+    <list default="true" id="af7f7854-827d-4cfe-abf5-694ba6d4f010" name="Default Changelist" comment="Update - 8">
+      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/menu/MenuInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/menu/MenuType.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/menu/Menu.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/menu/menus/ArenaSelectorMenu.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/configuration/MenusConfiguration.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/Arena.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/Arena.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/ArenaCooldown.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/ArenaCooldown.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/PartyCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/PartyCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/PlayerListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/PlayerListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/managers/ArenaManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/managers/ArenaManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/managers/PartyManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/managers/PartyManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/items/ItemBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/items/ItemBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/playerdata/Storage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/playerdata/Storage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/playerdata/storages/local/LocalStorage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/playerdata/storages/local/LocalStorage.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/Utils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/configuration/MainConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/configuration/MainConfiguration.java" afterDir="false" />
     </list>
@@ -128,7 +131,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672283100910</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Update - 8">
+      <created>1672290019161</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1672290019161</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -163,6 +173,7 @@
     <MESSAGE value="Update - 5" />
     <MESSAGE value="Update - 6" />
     <MESSAGE value="Update - 7" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update - 7" />
+    <MESSAGE value="Update - 8" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update - 8" />
   </component>
 </project>

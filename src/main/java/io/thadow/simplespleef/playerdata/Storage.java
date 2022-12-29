@@ -9,7 +9,10 @@ import io.thadow.simplespleef.playerdata.storages.mysql.MySQLConnection;
 import io.thadow.simplespleef.playerdata.storages.mysql.MySQLStorage;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.logging.Level;
 
 public class Storage {
     @Getter @Setter
@@ -62,6 +65,14 @@ public class Storage {
             boolean ssl = Main.getConfiguration().getBoolean("Configuration.Storage.MySQL.SSL");
             (new MySQLConnection()).setup(host, port, database, username, password, ssl);
         }
+    }
+
+    public void startSaveTask() {
+        int delay = Main.getConfiguration().getInt("Configuration.Storage.Local.Save Every");
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
+            save();
+            Main.getInstance().getLogger().log(Level.INFO, "Data has been saved.");
+        }, 20L * 60 * delay, 0L);
     }
 
     public void save() {

@@ -2,6 +2,7 @@ package io.thadow.simplespleef.utils;
 
 import io.thadow.simplespleef.Main;
 import io.thadow.simplespleef.api.configuration.ConfigurationFile;
+import io.thadow.simplespleef.arena.Arena;
 import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -72,6 +73,39 @@ public class Utils {
         }
 
         return minutes_string + ":" + seconds_string;
+    }
+
+    public static String getFormattedStatus(Arena arena) {
+        String waiting = Main.getConfiguration().getString("Configuration.Arenas.Status.Waiting");
+        String starting = Main.getConfiguration().getString("Configuration.Arenas.Status.Starting");
+        String playing = Main.getConfiguration().getString("Configuration.Arenas.Status.Playing");
+        String ending = Main.getConfiguration().getString("Configuration.Arenas.Status.Ending");
+        String restarting = Main.getConfiguration().getString("Configuration.Arenas.Status.Restarting");
+        String disabled = Main.getConfiguration().getString("Configuration.Arenas.Status.Disabled");
+        String status;
+        switch (arena.getStatus()) {
+            case WAITING:
+                status = waiting;
+                break;
+            case STARTING:
+                status = starting;
+                break;
+            case PLAYING:
+                status = playing;
+                break;
+            case ENDING:
+                status = ending;
+                break;
+            case RESTARTING:
+                status = restarting;
+                break;
+            case DISABLED:
+                status = disabled;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + arena.getStatus());
+        }
+        return format(status);
     }
 
     public static Location getLocationFromConfig(ConfigurationFile configuration, String path) {

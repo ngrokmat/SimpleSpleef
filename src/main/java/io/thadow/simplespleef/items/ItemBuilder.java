@@ -16,6 +16,10 @@ public class ItemBuilder {
         itemStack = new ItemStack(material, amount);
     }
 
+    public ItemBuilder(Material material, int amount, short data) {
+        itemStack = new ItemStack(material, amount, data);
+    }
+
     public ItemBuilder setDisplayName(String displayName) {
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (itemMeta == null) {

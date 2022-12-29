@@ -100,7 +100,6 @@ public class LocalStorage {
         get().set("Data." + uuid + ".Wins", currentWins + 1);
         PlayerData playerData = PlayerDataManager.getManager().getPlayerData(player.getName());
         playerData.addWin();
-        save();
     }
 
     public static void addLose(Player player) {
@@ -109,7 +108,6 @@ public class LocalStorage {
         get().set("Data." + uuid + ".Losses", currentWins + 1);
         PlayerData playerData = PlayerDataManager.getManager().getPlayerData(player.getName());
         playerData.addLose();
-        save();
     }
 
     public static ArrayList<PlayerData> getPlayers() {

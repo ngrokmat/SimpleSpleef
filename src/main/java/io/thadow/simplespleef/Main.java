@@ -13,6 +13,7 @@ import io.thadow.simplespleef.managers.ScoreboardManager;
 import io.thadow.simplespleef.managers.SignsManager;
 import io.thadow.simplespleef.playerdata.Storage;
 import io.thadow.simplespleef.utils.configuration.MainConfiguration;
+import io.thadow.simplespleef.utils.configuration.MenusConfiguration;
 import io.thadow.simplespleef.utils.configuration.ScoreboardsConfiguration;
 import io.thadow.simplespleef.utils.configuration.SignsConfiguration;
 import lombok.Getter;
@@ -37,6 +38,8 @@ public class Main extends JavaPlugin {
     private static SignsConfiguration signsConfiguration;
     @Getter
     private static ScoreboardsConfiguration scoreboardsConfiguration;
+    @Getter
+    private static MenusConfiguration menusConfiguration;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -70,6 +73,7 @@ public class Main extends JavaPlugin {
         configuration = new MainConfiguration("configuration", getDataFolder().toString());
         signsConfiguration = new SignsConfiguration("signs", getDataFolder().toString());
         scoreboardsConfiguration = new ScoreboardsConfiguration("scoreboards", getDataFolder().toString());
+        menusConfiguration = new MenusConfiguration("menus", getDataFolder().toString());
         StorageType storageType = StorageType.valueOf(configuration.getString("Configuration.Storage.Type"));
         Storage.getStorage().setupStorage(storageType);
         PlayerDataManager.getManager().loadPlayers();
@@ -82,6 +86,7 @@ public class Main extends JavaPlugin {
         registerListeners(new SignsListener(), new PlayerListener(), new ArenaListener());
         ArenaManager.getManager().loadArenas();
         ScoreboardManager.getManager().run();
+        Storage.getStorage().startSaveTask();
     }
 
     @Override
@@ -90,6 +95,7 @@ public class Main extends JavaPlugin {
         for (Arena arena : ArenaManager.getManager().getArenas()) {
             arena.end(true);
         }
+        Storage.getStorage().save();
     }
 
     private void registerCommand(CommandExecutor commandExecutor, String key) {

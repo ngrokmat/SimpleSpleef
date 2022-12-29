@@ -18,6 +18,7 @@ public class MainConfiguration extends ConfigurationFile {
             YamlConfiguration configuration = getConfiguration();
 
             configuration.addDefault("Configuration.Storage.Type", "LOCAL");
+            configuration.addDefault("Configuration.Storage.Local.Save Every", 10);
             configuration.addDefault("Configuration.Storage.MySQL.Host", "host");
             configuration.addDefault("Configuration.Storage.MySQL.Port", 1313);
             configuration.addDefault("Configuration.Storage.MySQL.Database", "database");
