@@ -59,12 +59,31 @@ public class ArenaManager {
         return null;
     }
 
-    public boolean handleJoin(Player player, Arena arena) {
+    public boolean joinRandom(Player player, boolean spectating) {
+        List<Arena> arenas = Utils.getSorted(getAvailableArenas());
+
+        if (spectating) {
+            ArenaManager.getManager().handleLeave(PlayerDataManager.getManager().getSpleefPlayer(player), PlayerDataManager.getManager().getSpleefPlayer(player).getArena(), true);
+        }
+
+        for (Arena arena : arenas) {
+            if (arena.getStatus() == Status.STARTING) {
+                if (arena.getPlayers().size() != arena.getMaxPlayers()) {
+                    return handleJoin(player, arena, spectating);
+                }
+            } else if (arena.getStatus() == Status.WAITING) {
+                return handleJoin(player, arena, spectating);
+            }
+        }
+        return false;
+    }
+
+    public boolean handleJoin(Player player, Arena arena, boolean spectating) {
         if (arena == null) {
             player.sendMessage("La arena no existe");
             return false;
         }
-        if (PlayerDataManager.getManager().getSpleefPlayer(player).getArena() != null) {
+        if (PlayerDataManager.getManager().getSpleefPlayer(player).getArena() != null && !spectating) {
             player.sendMessage("Ya estas en una arena!");
             return false;
         }
@@ -107,14 +126,16 @@ public class ArenaManager {
             } else {
                 boolean anyInArena = false;
                 for (Player member : party.getMembers()) {
-                    if (PlayerDataManager.getManager().getSpleefPlayer(member).getArena().getStatus() == Status.PLAYING) {
-                        anyInArena = true;
+                    if (PlayerDataManager.getManager().getSpleefPlayer(member).getArena() != null) {
+                        if (PlayerDataManager.getManager().getSpleefPlayer(member).getArena().getStatus() == Status.PLAYING) {
+                            anyInArena = true;
+                        }
                     }
                 }
                 if (anyInArena) {
                     String message = Utils.getMessage("Messages.Arenas.Party Member In Game");
                     player.sendMessage(message);
-                    return true;
+                    return false;
                 }
                 for (Player member : party.getMembers()) {
                     arena.addPlayer(PlayerDataManager.getManager().getSpleefPlayer(member));
@@ -127,8 +148,8 @@ public class ArenaManager {
         return true;
     }
 
-    public boolean handleLeave(SpleefPlayer player, Arena arena) {
-        arena.removePlayer(player);
+    public boolean handleLeave(SpleefPlayer player, Arena arena, boolean silent) {
+        arena.removePlayer(player, silent);
         return true;
     }
 
@@ -167,7 +188,7 @@ public class ArenaManager {
     }
 
     public boolean deleteArena(String id) {
-        File arenaFile = new File(Main.getInstance().getDataFolder() + "/Arena/" + id + ".yml");
+        File arenaFile = new File(Main.getInstance().getDataFolder() + "/Arenas/" + id + ".yml");
         if (!arenaFile.exists()) {
             return false;
         }
@@ -179,5 +200,15 @@ public class ArenaManager {
         arenas.remove(arena);
         FileUtils.deleteQuietly(arenaFile);
         return true;
+    }
+
+    public List<Arena> getAvailableArenas() {
+        List<Arena> arenas = new ArrayList<>();
+        for (Arena arena : getArenas()) {
+            if (arena.getStatus() == Status.STARTING || arena.getStatus() == Status.WAITING) {
+                arenas.add(arena);
+            }
+        }
+        return arenas;
     }
 }

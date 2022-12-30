@@ -33,7 +33,7 @@ public class v1_8_R3 extends VersionHandler {
             tag = new NBTTagCompound();
             itemStack.setTag(tag);
         }
-        tag.setString("ParkourRun", s);
+        tag.setString("SimpleSpleef", s);
         return CraftItemStack.asBukkitCopy(itemStack);
     }
 
@@ -62,7 +62,7 @@ public class v1_8_R3 extends VersionHandler {
         NBTTagCompound tag = itemStack.getTag();
         if (tag == null)
             return false;
-        return tag.hasKey("ParkourRun");
+        return tag.hasKey("SimpleSpleef");
     }
 
     @Override
@@ -71,7 +71,7 @@ public class v1_8_R3 extends VersionHandler {
         NBTTagCompound tag = itemStack.getTag();
         if (tag == null)
             return "";
-        return tag.getString("ParkourRun");
+        return tag.getString("SimpleSpleef");
     }
 
     @Override

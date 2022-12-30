@@ -268,7 +268,7 @@ public class SignsListener implements Listener {
                     toJoin = sign.getLine(3);
                     arenaToJoin = ArenaManager.getManager().getArenaByNameOrID(toJoin);
                 }
-                ArenaManager.getManager().handleJoin(event.getPlayer(), arenaToJoin);
+                ArenaManager.getManager().handleJoin(event.getPlayer(), arenaToJoin, false);
             }
         }
     }

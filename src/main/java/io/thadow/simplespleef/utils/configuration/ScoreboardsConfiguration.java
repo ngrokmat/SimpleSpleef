@@ -19,14 +19,14 @@ public class ScoreboardsConfiguration extends ConfigurationFile {
                     "&7",
                     "%player_name%",
                     "&7Wins: &a%wins%",
-                    "&Losses: &c%losses%",
+                    "&7Losses: &c%losses%",
                     "&7",
                     "&7mc.myserver.com"));
 
             configuration.addDefault("Scoreboards.Waiting.Enabled", true);
             configuration.addDefault("Scoreboards.Waiting.Update", 20);
             configuration.addDefault("Scoreboards.Waiting.Title", "&eWaiting");
-            configuration.addDefault("Scoreboards.Waiting.Line", Arrays.asList("%server_time_yyyy/MM/dd%",
+            configuration.addDefault("Scoreboards.Waiting.Lines", Arrays.asList("%server_time_yyyy/MM/dd%",
                     "&7",
                     "&aMap&7: &a%arenaName%",
                     "&7",

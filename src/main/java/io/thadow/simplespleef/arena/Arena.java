@@ -5,17 +5,21 @@ import io.thadow.simplespleef.api.arena.DeathMode;
 import io.thadow.simplespleef.api.arena.SpleefMode;
 import io.thadow.simplespleef.api.arena.Status;
 import io.thadow.simplespleef.api.arena.TeleportDeathMode;
+import io.thadow.simplespleef.api.event.PlayerDeathInArenaEvent;
+import io.thadow.simplespleef.api.event.PlayerJoinArenaEvent;
+import io.thadow.simplespleef.api.event.PlayerLeaveArenaEvent;
 import io.thadow.simplespleef.api.player.SpleefPlayer;
 import io.thadow.simplespleef.arena.configuration.ArenaConfiguration;
 import io.thadow.simplespleef.items.ItemBuilder;
+import io.thadow.simplespleef.items.ItemGiver;
 import io.thadow.simplespleef.lib.titles.Titles;
 import io.thadow.simplespleef.managers.PlayerDataManager;
+import io.thadow.simplespleef.managers.ScoreboardManager;
 import io.thadow.simplespleef.managers.SignsManager;
 import io.thadow.simplespleef.playerdata.Storage;
 import io.thadow.simplespleef.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -30,6 +34,7 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Arena {
     @Getter
@@ -58,7 +63,7 @@ public class Arena {
     DeathMode deathMode;
     @Getter
     int time, maxTime, endingTime, reEnableTime;
-    int fwTaskID;
+    int fwTaskID, initTaskID, gameTimeTaskID;
     @Getter
     int yLevelMode;
     @Getter
@@ -77,6 +82,8 @@ public class Arena {
     int snowSpecialAmount, eggSpecialAmount, arrowSpecialAmount;
     @Getter
     HashMap<Integer, ItemStack> items = new HashMap<>();
+    @Getter
+    boolean forceStarted = false;
 
     public Arena(String arenaID) {
         this.arenaID = arenaID;
@@ -136,14 +143,14 @@ public class Arena {
     public void start() {
         setWinner(null);
         setStatus(Status.PLAYING);
-        ArenaCooldown cooldown = new ArenaCooldown();
-        cooldown.startGameTime(this);
         for (SpleefPlayer player : getTotalPlayers()) {
+            player.getPlayer().getInventory().clear();
             player.teleport(spawnLocation);
             for (int i : items.keySet()) {
                 player.getPlayer().getInventory().setItem((i - 1), items.get(i));
             }
             player.getPlayer().setGameMode(GameMode.SURVIVAL);
+            ItemGiver.getGiver().giveArenaPlayingItems(player.getPlayer());
         }
         List<String> message = Main.getConfiguration().getStringList("Messages.Arenas.Started.Message");
         message = Utils.format(message);
@@ -166,6 +173,15 @@ public class Arena {
                 Titles.sendTitle(player.getPlayer(), fadeIn, stay, fadeOut, title, subTitle);
             }
         }
+        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+            gameTimeTaskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
+                maxTime--;
+                if (maxTime == 0) {
+                    end(false);
+                    Bukkit.getScheduler().cancelTask(gameTimeTaskID);
+                }
+            }, 0L, 20L);
+        }, 20L);
     }
 
     public void end(boolean closingServer) {
@@ -173,10 +189,11 @@ public class Arena {
             setWinner(null);
             setStatus(Status.DISABLED);
             for (SpleefPlayer player : getTotalPlayers()) {
-                removePlayer(player);
+                removePlayer(player, true);
             }
             for (Location brokenLocation : brokenBlocks.keySet()) {
-                brokenLocation.getWorld().getBlockAt(brokenLocation).setType(brokenBlocks.get(brokenLocation));
+                brokenLocation.getBlock().setType(brokenBlocks.get(brokenLocation));
+                brokenLocation.getBlock().getState().update();
             }
             return;
         }
@@ -184,7 +201,7 @@ public class Arena {
         setStatus(Status.ENDING);
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             for (SpleefPlayer player : getTotalPlayers()) {
-                removePlayer(player);
+                removePlayer(player, true);
                 for (Player players : Bukkit.getOnlinePlayers()) {
                     if (!players.canSee(player.getPlayer())) {
                         players.showPlayer(players.getPlayer());
@@ -197,12 +214,14 @@ public class Arena {
             setStatus(Status.RESTARTING);
 
             for (Location brokenLocation : brokenBlocks.keySet()) {
-                brokenLocation.getWorld().getBlockAt(brokenLocation).setType(brokenBlocks.get(brokenLocation));
+                brokenLocation.getBlock().setType(brokenBlocks.get(brokenLocation));
+                brokenLocation.getBlock().getState().update();
             }
 
             brokenBlocks.clear();
 
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+                forceStarted = false;
                 setWinner(null);
                 time = configuration.getInt("Wait To Start Time");
                 maxTime = configuration.getInt("Max Time");
@@ -226,7 +245,7 @@ public class Arena {
 
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             for (SpleefPlayer player : getTotalPlayers()) {
-                removePlayer(player);
+                removePlayer(player, true);
                 for (Player players : Bukkit.getOnlinePlayers()) {
                     if (!players.canSee(player.getPlayer())) {
                         players.showPlayer(players.getPlayer());
@@ -239,12 +258,14 @@ public class Arena {
             setStatus(Status.RESTARTING);
 
             for (Location brokenLocation : brokenBlocks.keySet()) {
-                brokenLocation.getWorld().getBlockAt(brokenLocation).setType(brokenBlocks.get(brokenLocation));
+                brokenLocation.getBlock().setType(brokenBlocks.get(brokenLocation));
+                brokenLocation.getBlock().getState().update();
             }
 
             brokenBlocks.clear();
 
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+                forceStarted = false;
                 setWinner(null);
                 time = configuration.getInt("Wait To Start Time");
                 maxTime = configuration.getInt("Max Time");
@@ -254,13 +275,70 @@ public class Arena {
     }
 
     public void checkArena() {
+        if (forceStarted) {
+            return;
+        }
         if (getStatus() != Status.STARTING) {
             if (players.size() >= minPlayers) {
-                ArenaCooldown cooldown = new ArenaCooldown();
-                cooldown.start(this);
-                setStatus(Status.STARTING);
+                initStarting(false);
             }
         }
+    }
+
+    public void initStarting(boolean forceStarting) {
+        this.forceStarted = forceStarting;
+        setStatus(Status.STARTING);
+        broadcast("Iniciando en: " + time);
+        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+            initTaskID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
+                if (players.size() < minPlayers && !forceStarting) {
+                    Bukkit.getScheduler().cancelTask(initTaskID);
+                    setStatus(Status.WAITING);
+                    String message = Utils.getMessage("Messages.Arenas.Starting.Countdown Stopped");
+                    broadcast(message);
+                    setTime(getConfiguration().getInt("Wait To Start Time"), false);
+                    return;
+                }
+                if (players.size() == 0) {
+                    Bukkit.getScheduler().cancelTask(initTaskID);
+                    setStatus(Status.WAITING);
+                    setTime(getConfiguration().getInt("Wait To Start Time"), false);
+                    return;
+                }
+                for (SpleefPlayer player : getTotalPlayers()) {
+                    ScoreboardManager.updateStartingScoreboard(player);
+                }
+                time--;
+                if (time == 0) {
+                    start();
+                    Bukkit.getScheduler().cancelTask(initTaskID);
+                    return;
+                }
+                if (Main.getConfiguration().contains("Messages.Arenas.Starting.Announce.Second " + time + ".Message")) {
+                    String message = Utils.getMessage("Messages.Arenas.Starting.Announce.Second " + time + ".Message");
+                    message = message.replace("%time%", String.valueOf(time));
+                    broadcast(message);
+                }
+                if (Main.getConfiguration().getBoolean("Messages.Arenas.Starting.Announce.Second " + time + ".Sound.Enabled")) {
+                    String soundPath = Main.getConfiguration().getString("Messages.Arenas.Starting.Announce.Second " + time + ".Sound.Sound");
+                    for (SpleefPlayer player : getTotalPlayers()) {
+                        Utils.playSound(player.getPlayer(), soundPath);
+                    }
+                }
+                if (Main.getConfiguration().getBoolean("Messages.Arenas.Starting.Announce.Second " + time + ".Titles.Enabled")) {
+                    String title = Main.getConfiguration().getString("Messages.Arenas.Starting.Announce.Second " + time + ".Titles.Title");
+                    title = title.replace("%time%", String.valueOf(time));
+                    String subTitle = Main.getConfiguration().getString("Messages.Arenas.Starting.Announce.Second " + time + ".Titles.Sub Title");
+                    subTitle = subTitle.replace("%time%", String.valueOf(time));
+                    int fadeIn = Main.getConfiguration().getInt("Messages.Arenas.Starting.Titles Settings.Fade In");
+                    int stay = Main.getConfiguration().getInt("Messages.Arenas.Starting.Titles Settings.Stay");
+                    int fadeOut = Main.getConfiguration().getInt("Messages.Arenas.Starting.Titles Settings.Fade Out");
+                    for (SpleefPlayer player : getTotalPlayers()) {
+                        Titles.sendTitle(player.getPlayer(), fadeIn, stay, fadeOut, title, subTitle);
+                    }
+                }
+            }, 0L, 20L);
+        }, 20L);
     }
 
     public void fireworks(Player player) {
@@ -279,6 +357,8 @@ public class Arena {
     }
 
     public void addPlayer(SpleefPlayer player) {
+        player.setArena(this);
+        player.setSpectating(false);
         players.add(player);
         player.getPlayer().teleport(waitLocation);
         for (Player players : Bukkit.getOnlinePlayers()) {
@@ -294,11 +374,10 @@ public class Arena {
         player.getPlayer().setFlying(false);
         player.getPlayer().setAllowFlight(false);
         player.getPlayer().setGameMode(GameMode.ADVENTURE);
-        player.setArena(this);
-        player.setSpectating(false);
         Utils.getBuilders().remove(player.getPlayer());
-        refreshSigns();
-        SignsManager.getManager().updateSigns(this);
+        PlayerJoinArenaEvent event = new PlayerJoinArenaEvent(this, player.getPlayer(), player);
+        Bukkit.getPluginManager().callEvent(event);
+        ItemGiver.getGiver().giveArenaWaitingItems(player.getPlayer());
         checkArena();
         String message = Utils.getMessage("Messages.Arenas.Player Join");
         message = message.replace("%player%", player.getName());
@@ -307,13 +386,17 @@ public class Arena {
         broadcast(message);
     }
 
-    public void removePlayer(SpleefPlayer player) {
+    public void removePlayer(SpleefPlayer player, boolean silent) {
+        player.setArena(null);
+        player.setSpectating(false);
         players.remove(player);
         spectatingPlayers.remove(player);
-        String message = Utils.getMessage("Messages.Arenas.Player Leave");
-        message = message.replace("%player%", player.getName());
-        broadcast(message);
-        player.getPlayer().teleport(player.getPlayer().getWorld().getSpawnLocation());
+        if (!silent) {
+            String message = Utils.getMessage("Messages.Arenas.Player Leave");
+            message = message.replace("%player%", player.getName());
+            broadcast(message);
+        }
+        player.getPlayer().teleport(Main.getLobbyLocation());
         for (Player players : Bukkit.getOnlinePlayers()) {
             if (player.isSpectating()) {
                 if (!players.canSee(player.getPlayer())) {
@@ -321,8 +404,6 @@ public class Arena {
                 }
             }
         }
-        player.setArena(null);
-        player.setSpectating(false);
         player.getPlayer().setAllowFlight(false);
         player.getPlayer().setFlying(false);
         player.getPlayer().setHealth(20.0D);
@@ -330,6 +411,9 @@ public class Arena {
         player.getPlayer().getInventory().clear();
         player.getPlayer().getInventory().setArmorContents(null);
         player.getPlayer().removePotionEffect(PotionEffectType.INVISIBILITY);
+        PlayerLeaveArenaEvent event = new PlayerLeaveArenaEvent(this, player.getPlayer(), player);
+        Bukkit.getPluginManager().callEvent(event);
+        ItemGiver.getGiver().giveLobbyItems(player.getPlayer());
         if (getStatus() == Status.PLAYING && getPlayers().size() == 0) {
             end(false);
             return;
@@ -338,15 +422,9 @@ public class Arena {
             endWithWinner(players.get(0).getPlayer());
             return;
         }
-        if (getPlayers().size() < minPlayers && status == Status.STARTING) {
-            setStatus(Status.WAITING);
-            return;
-        }
         if (getStatus() == Status.WAITING) {
             checkArena();
         }
-        refreshSigns();
-        SignsManager.getManager().updateSigns(this);
     }
 
     public void killPlayer(SpleefPlayer player) {
@@ -362,6 +440,9 @@ public class Arena {
         String message = Utils.getMessage("Messages.Arenas.Player Death");
         message = message.replace("%player%", player.getName());
         broadcast(message);
+        PlayerDeathInArenaEvent event = new PlayerDeathInArenaEvent(this, player.getPlayer(), player);
+        Bukkit.getPluginManager().callEvent(event);
+        ItemGiver.getGiver().giveSpectatorItems(player.getPlayer());
         if (getPlayers().size() == 0 && status == Status.PLAYING) {
             end(false);
             return;
@@ -482,6 +563,9 @@ public class Arena {
         if (enabled) {
             setStatus(Status.WAITING);
         } else {
+            for (SpleefPlayer players : getTotalPlayers()) {
+                removePlayer(players, true);
+            }
             getPlayers().clear();
             setStatus(Status.DISABLED);
         }

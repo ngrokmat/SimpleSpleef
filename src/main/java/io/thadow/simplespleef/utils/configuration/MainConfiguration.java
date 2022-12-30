@@ -26,12 +26,62 @@ public class MainConfiguration extends ConfigurationFile {
             configuration.addDefault("Configuration.Storage.MySQL.Password", "password");
             configuration.addDefault("Configuration.Storage.MySQL.SSL", false);
 
+            configuration.addDefault("Configuration.Items.Lobby.Arena Selector Item.Enabled", true);
             configuration.addDefault("Configuration.Items.Lobby.Arena Selector Item.Material", "EMERALD");
             configuration.addDefault("Configuration.Items.Lobby.Arena Selector Item.Slot", 1);
             configuration.addDefault("Configuration.Items.Lobby.Arena Selector Item.Name", "&a&lPlay &7(Right click)");
             configuration.addDefault("Configuration.Items.Lobby.Arena Selector Item.Unbreakable", true);
             configuration.addDefault("Configuration.Items.Lobby.Arena Selector Item.Amount", 1);
             configuration.addDefault("Configuration.Items.Lobby.Arena Selector Item.Lore", Arrays.asList("&7Use this item to", "&7select an arena and play"));
+
+            configuration.addDefault("Configuration.Items.Lobby.Party Item.Enabled", true);
+            configuration.addDefault("Configuration.Items.Lobby.Party Item.Material", "CAKE");
+            configuration.addDefault("Configuration.Items.Lobby.Party Item.Slot", 8);
+            configuration.addDefault("Configuration.Items.Lobby.Party Item.Name", "&d&lParty &7(Right click)");
+            configuration.addDefault("Configuration.Items.Lobby.Party Item.Unbreakable", true);
+            configuration.addDefault("Configuration.Items.Lobby.Party Item.Amount", 1);
+            configuration.addDefault("Configuration.Items.Lobby.Party Item.Lore", Arrays.asList("&7Use this item to", "&7create a party, manage your party", "&7or join to a public party."));
+
+            configuration.addDefault("Configuration.Items.Lobby.Leave Item.Enabled", true);
+            configuration.addDefault("Configuration.Items.Lobby.Leave Item.Material", "BED");
+            configuration.addDefault("Configuration.Items.Lobby.Leave Item.Slot", 9);
+            configuration.addDefault("Configuration.Items.Lobby.Leave Item.Name", "&cLeave");
+            configuration.addDefault("Configuration.Items.Lobby.Leave Item.Unbreakable", true);
+            configuration.addDefault("Configuration.Items.Lobby.Leave Item.Amount", 1);
+            configuration.addDefault("Configuration.Items.Lobby.Leave Item.Server To Connect", "hub-1");
+            configuration.addDefault("Configuration.Items.Lobby.Leave Item.Lore", Collections.singletonList("&7Use this item to leave this server."));
+
+            configuration.addDefault("Configuration.Items.Waiting Items.Leave Item.Enabled", true);
+            configuration.addDefault("Configuration.Items.Waiting Items.Leave Item.Material", "BED");
+            configuration.addDefault("Configuration.Items.Waiting Items.Leave Item.Slot", 9);
+            configuration.addDefault("Configuration.Items.Waiting Items.Leave Item.Name", "&cLeave");
+            configuration.addDefault("Configuration.Items.Waiting Items.Leave Item.Unbreakable", true);
+            configuration.addDefault("Configuration.Items.Waiting Items.Leave Item.Amount", 1);
+            configuration.addDefault("Configuration.Items.Waiting Items.Leave Item.Lore", "&7Use this item to leave.");
+
+            configuration.addDefault("Configuration.Items.Playing Items.Leave Item.Enabled", true);
+            configuration.addDefault("Configuration.Items.Playing Items.Leave Item.Material", "BED");
+            configuration.addDefault("Configuration.Items.Playing Items.Leave Item.Slot", 9);
+            configuration.addDefault("Configuration.Items.Playing Items.Leave Item.Name", "&cLeave");
+            configuration.addDefault("Configuration.Items.Playing Items.Leave Item.Unbreakable", true);
+            configuration.addDefault("Configuration.Items.Playing Items.Leave Item.Amount", 1);
+            configuration.addDefault("Configuration.Items.Playing Items.Leave Item.Lore", "&7Use this item to leave.");
+
+            configuration.addDefault("Configuration.Items.Spectator Items.Play Again Item.Enabled", true);
+            configuration.addDefault("Configuration.Items.Spectator Items.Play Again Item.Material", "PAPER");
+            configuration.addDefault("Configuration.Items.Spectator Items.Play Again Item.Slot", 8);
+            configuration.addDefault("Configuration.Items.Spectator Items.Play Again Item.Name", "&ePlay again!");
+            configuration.addDefault("Configuration.Items.Spectator Items.Play Again Item.Unbreakable", true);
+            configuration.addDefault("Configuration.Items.Spectator Items.Play Again Item.Amount", 1);
+            configuration.addDefault("Configuration.Items.Spectator Items.Play Again Item.Lore", "&7Right click to play again!");
+
+            configuration.addDefault("Configuration.Items.Spectator Items.Leave Item.Enabled", true);
+            configuration.addDefault("Configuration.Items.Spectator Items.Leave Item.Material", "BED");
+            configuration.addDefault("Configuration.Items.Spectator Items.Leave Item.Slot", 9);
+            configuration.addDefault("Configuration.Items.Spectator Items.Leave Item.Name", "&cLeave");
+            configuration.addDefault("Configuration.Items.Spectator Items.Leave Item.Unbreakable", true);
+            configuration.addDefault("Configuration.Items.Spectator Items.Leave Item.Amount", 1);
+            configuration.addDefault("Configuration.Items.Spectator Items.Leave Item.Lore", "&7Use this item to leave.");
 
             configuration.addDefault("Configuration.Parties.Expire Time", 60);
             configuration.addDefault("Configuration.Parties.Max Size", 4);
@@ -43,17 +93,18 @@ public class MainConfiguration extends ConfigurationFile {
             configuration.addDefault("Configuration.Arenas.Status.Restarting", "&1RESTARTING");
             configuration.addDefault("Configuration.Arenas.Status.Disabled", "&1DISABLED");
 
+            configuration.addDefault("Configuration.Arenas.Per Arena Chat", true);
             configuration.addDefault("Configuration.Arenas.Nobody", "Nobody");
 
             configuration.addDefault("Messages.Arenas.Party Member In Game", "&6&lParty &8&l>> &cUno de los integrantes de la arena sigue en juego!");
 
             configuration.addDefault("Messages.Arenas.Not Enough Space", "&6&lParty &8&l>> &cNo hay espacio suficiente para los integrantes de tu fiesta.");
 
-            configuration.addDefault("Messages.Arenas.Player Join", "&7%player% &ese ha unido (&b%current%&e/%b%max%");
+            configuration.addDefault("Messages.Arenas.Player Join", "&7%player% &ese ha unido (&b%current%&e/&b%max%&e)");
             configuration.addDefault("Messages.Arenas.Player Leave", "&7%player% &eha salido!");
             configuration.addDefault("Messages.Arenas.Player Death", "&7%player% &cha muerto!");
 
-            configuration.addDefault("Messages.Arenas.Starting.Starting In", "&eIniciando en &a%time% &esegundos");
+            configuration.addDefault("Messages.Arenas.Starting.Countdown Started", "&eIniciando en &a%time% &esegundos");
             configuration.addDefault("Messages.Arenas.Starting.Titles Settings.Fade In", 10);
             configuration.addDefault("Messages.Arenas.Starting.Titles Settings.Stay", 20);
             configuration.addDefault("Messages.Arenas.Starting.Titles Settings.Fade Out", 10);
@@ -91,7 +142,7 @@ public class MainConfiguration extends ConfigurationFile {
             configuration.addDefault("Messages.Arenas.Starting.Announce.Second 2.Titles.Title", "&c%time%");
             configuration.addDefault("Messages.Arenas.Starting.Announce.Second 2.Titles.Sub Title", "");
 
-            configuration.addDefault("Messages.Arenas.Starting.Announce.Second 1.Message", "&eIniciando en %time% &esegundos");
+            configuration.addDefault("Messages.Arenas.Starting.Announce.Second 1.Message", "&eIniciando en %time% &esegundo");
             configuration.addDefault("Messages.Arenas.Starting.Announce.Second 1.Sound.Enabled", true);
             configuration.addDefault("Messages.Arenas.Starting.Announce.Second 1.Sound.Sound", "NOTE_PLING:10:10");            configuration.addDefault("Messages.Arenas.Starting.Announce.Second 1.Titles.Enabled", true);
             configuration.addDefault("Messages.Arenas.Starting.Announce.Second 1.Titles.Title", "&c%time%");
@@ -150,6 +201,8 @@ public class MainConfiguration extends ConfigurationFile {
             configuration.addDefault("Messages.Commands.Party Command.Can't Invite Self", "&6&lParty &8&l>> &cNo puedes invitarte a ti mismo!");
             configuration.addDefault("Messages.Commands.Party Command.Invited Already In Party", "&6&lParty &8&l>> &e%target% &cya se encuentra en una fiesta.");
             configuration.addDefault("Messages.Commands.Party Command.Party Full", "&6&lParty &8&l>> &cLa fiesta esta llena.");
+            configuration.addDefault("Messages.Commands.Party Command.Inviting Someone", "&6&lParty &8&l>> &aEscribre el nombre de la persona que quieres invitar.");
+            configuration.addDefault("Messages.Commands.Party Command.Already Invited", "&6&lParty &8&l>> &cYa has inivitado a ese jugador.");
             configuration.addDefault("Messages.Commands.Party Command.Invite Sent", "&6&lParty &8&l>> &aInvitación enviada!");
             configuration.addDefault("Messages.Commands.Party Command.Invite Message", "&6&lParty &8&l>> &e%from% Te ha invitado a su fiesta! Tienes &a%time% &epara aceptar la invitación. &aClick aqui!");
             configuration.addDefault("Messages.Commands.Party Command.Invite Message Hover", "&aClick to join!");
@@ -164,6 +217,9 @@ public class MainConfiguration extends ConfigurationFile {
             configuration.addDefault("Messages.Commands.Party Command.Leader Set", "&6&lParty &8&l>> &aAhora eres el lider de la fiesta!");
             configuration.addDefault("Messages.Commands.Party Command.Leader Changed", "&6&lParty &8&l>> &e%target% ahora es el lider de la fiesta.");
             configuration.addDefault("Messages.Commands.Party Command.Invite Accept", "&6&lParty &8&l>> &aTe has unido a la fiesta.");
+            configuration.addDefault("Messages.Commands.Party Command.Joined Public", "&6&lParty &8>> &aTe has unido a la fiesta de &e%leader%");
+            configuration.addDefault("Messages.Commands.Party Command.Party Is Private", "&6&lParty &8>> &cLa fiesta a la que te intentas unir es privada.");
+            configuration.addDefault("Messages.Commands.Party Command.No Public Parties", "&6&lParty &8>> &cNo hay fiestas publicas a las que te puedas unir.");
             configuration.addDefault("Messages.Commands.Party Command.Player Joined", "&6&lParty &8&l>> &e%target% se ha unido a la fiesta!");
             configuration.addDefault("Messages.Commands.Party Command.Party Leave", "&6&lParty &l&8>> &eHas salido de la fiesta.");
             configuration.addDefault("Messages.Commands.Party Command.Player Left", "&6&lParty &8&l>> &e%target% ha salido de la fiesta.");

@@ -1,5 +1,6 @@
 package io.thadow.simplespleef.commands;
 
+import io.thadow.simplespleef.api.arena.Status;
 import io.thadow.simplespleef.api.playerdata.PlayerData;
 import io.thadow.simplespleef.arena.Arena;
 import io.thadow.simplespleef.managers.ArenaManager;
@@ -23,7 +24,7 @@ public class LeaveCommand implements CommandExecutor {
                     player.sendMessage(message);
                     return true;
                 }
-                ArenaManager.getManager().handleLeave(PlayerDataManager.getManager().getSpleefPlayer(player), playerArena);
+                ArenaManager.getManager().handleLeave(PlayerDataManager.getManager().getSpleefPlayer(player), playerArena, false);
             }
         }
         return false;

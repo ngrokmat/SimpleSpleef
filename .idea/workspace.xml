@@ -9,19 +9,42 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="af7f7854-827d-4cfe-abf5-694ba6d4f010" name="Default Changelist" comment="Update - 8">
-      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/menu/MenuInfo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/menu/MenuType.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/menu/Menu.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/menu/menus/ArenaSelectorMenu.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/configuration/MenusConfiguration.java" afterDir="false" />
+    <list default="true" id="af7f7854-827d-4cfe-abf5-694ba6d4f010" name="Default Changelist" comment="Update - 9">
+      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/event/PlayerDeathInArenaEvent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/event/PlayerJoinArenaEvent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/event/PlayerLeaveArenaEvent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/ArenaEventsListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/MenusListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/PartyListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/menu/menus/party/PartyMainMenu.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/menu/menus/party/PartyMembersMenu.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/menu/menus/party/PartyOptionsMenu.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/menu/menus/party/PublicPartiesMenu.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/items/ItemBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/items/ItemBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/menu/MenuType.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/menu/MenuType.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/party/Party.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/party/Party.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/Arena.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/Arena.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/ArenaCooldown.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/BuildCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/BuildCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/JoinCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/JoinCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/LeaveCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/LeaveCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/MainCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/MainCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/PartyCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/commands/PartyCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/items/ItemGiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/items/ItemGiver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/PlayerListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/PlayerListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/SignsListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/SignsListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/managers/ArenaManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/managers/ArenaManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/managers/PartyManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/managers/PartyManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/managers/ScoreboardManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/managers/ScoreboardManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/menu/Menu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/menu/Menu.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/menu/menus/ArenaSelectorMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/menu/menus/arenaselector/ArenaSelectorMenu.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/playerdata/Storage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/playerdata/Storage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/playerdata/storages/local/LocalStorage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/playerdata/storages/local/LocalStorage.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/Utils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/configuration/MainConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/configuration/MainConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/configuration/MenusConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/menu/configuration/MenusConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/configuration/ScoreboardsConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/utils/configuration/ScoreboardsConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/support_v_1_8_R3/src/main/java/io/thadow/simplespleef/support/v1_8_R3.java" beforeDir="false" afterPath="$PROJECT_DIR$/support_v_1_8_R3/src/main/java/io/thadow/simplespleef/support/v1_8_R3.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -138,7 +161,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672290019161</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Update - 9">
+      <created>1672353976128</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1672353976128</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -174,6 +204,7 @@
     <MESSAGE value="Update - 6" />
     <MESSAGE value="Update - 7" />
     <MESSAGE value="Update - 8" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update - 8" />
+    <MESSAGE value="Update - 9" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update - 9" />
   </component>
 </project>

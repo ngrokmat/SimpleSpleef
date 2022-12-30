@@ -1,5 +1,6 @@
 package io.thadow.simplespleef.api.party;
 
+import io.thadow.simplespleef.Main;
 import io.thadow.simplespleef.managers.PartyManager;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +19,7 @@ public class Party {
     @Getter @Setter
     PartyPrivacy privacy;
     @Getter
-    int maxSize;
+    int maxSize = Main.getConfiguration().getInt("Configuration.Parties.Max Size");
 
     public Party(Player leader) {
         this.leader = leader;

@@ -2,6 +2,7 @@ package io.thadow.simplespleef.managers;
 
 import io.thadow.simplespleef.Main;
 import io.thadow.simplespleef.api.party.Party;
+import io.thadow.simplespleef.api.party.PartyPrivacy;
 import io.thadow.simplespleef.utils.Utils;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -16,6 +17,8 @@ public class PartyManager {
     private static final PartyManager manager = new PartyManager();
     @Getter
     private final HashMap<UUID, UUID> partyInvites = new HashMap<>();
+    @Getter
+    private final List<Player> inviting = new ArrayList<>();
     @Getter
     private final List<Party> parties = new ArrayList<>();
     @Getter
@@ -59,5 +62,15 @@ public class PartyManager {
             }
         }
         return false;
+    }
+
+    public List<Party> getPublicParties() {
+        List<Party> parties = new ArrayList<>();
+        for (Party party : getParties()) {
+            if (party.getPrivacy() == PartyPrivacy.PUBLIC) {
+                parties.add(party);
+            }
+        }
+        return parties;
     }
 }

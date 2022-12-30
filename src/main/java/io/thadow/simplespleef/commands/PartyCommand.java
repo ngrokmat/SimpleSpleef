@@ -142,9 +142,14 @@ public class PartyCommand implements CommandExecutor {
                         player.sendMessage(message);
                         return true;
                     }
+                    if (!PartyManager.getManager().hasParty(target)) {
+                        String message = Utils.getMessage("Messages.Commands.Party Command.No Party Invited");
+                        message = message.replace("%target%", target.getName());
+                        player.sendMessage(message);
+                        return true;
+                    }
                     if (PartyManager.getManager().getPartyInvites().get(target.getUniqueId()).equals(player.getUniqueId())) {
                         PartyManager.getManager().getPartyInvites().remove(target.getUniqueId());
-                        if (PartyManager.getManager().hasParty(target)) {
                             Party party = PartyManager.getManager().getPlayerParty(target);
                             if (!party.isLeader(target)) {
                                 String message = Utils.getMessage("Messages.Commands.Party Command.Not Leader");
@@ -165,11 +170,6 @@ public class PartyCommand implements CommandExecutor {
                             party.addMember(player);
                             String message = Utils.getMessage("Messages.Commands.Party Command.Invite Accept");
                             player.sendMessage(message);
-                        } else {
-                            String message = Utils.getMessage("Messages.Commands.Party Command.No Party Invited");
-                            message = message.replace("%target%", target.getName());
-                            player.sendMessage(message);
-                        }
                     } else {
                         String message = Utils.getMessage("Messages.Commands.Party Command.Not Invited");
                         message = message.replace("%target%", target.getName());
@@ -214,6 +214,9 @@ public class PartyCommand implements CommandExecutor {
                         return true;
                     }
                     if (PartyManager.getManager().getPartyInvites().containsKey(player.getUniqueId())) {
+                        if (PartyManager.getManager().getPartyInvites().get(player.getUniqueId()) == target.getUniqueId()) {
+
+                        }
                         PartyManager.getManager().getPartyInvites().replace(player.getUniqueId(), target.getUniqueId());
                     } else {
                         PartyManager.getManager().getPartyInvites().put(player.getUniqueId(), target.getUniqueId());
@@ -302,7 +305,7 @@ public class PartyCommand implements CommandExecutor {
                         player.sendMessage(message);
                         return true;
                     }
-                    if (party.getLeader() == player) {
+                    if (party.getLeader() == target) {
                         String message = Utils.getMessage("Messages.Commands.Party Command.Already Leader");
                         player.sendMessage(message);
                         return true;
@@ -310,6 +313,7 @@ public class PartyCommand implements CommandExecutor {
                     if (!party.getMembers().contains(target)) {
                         String message = Utils.getMessage("Messages.Commands.Party Command.Not In Members");
                         message = message.replace("%target%", target.getName());
+                        player.sendMessage(message);
                         return true;
                     }
                     party.setLeader(target);

@@ -1,6 +1,7 @@
 package io.thadow.simplespleef.commands;
 
 import io.thadow.simplespleef.Main;
+import io.thadow.simplespleef.api.arena.Status;
 import io.thadow.simplespleef.arena.Arena;
 import io.thadow.simplespleef.managers.ArenaManager;
 import io.thadow.simplespleef.utils.Utils;
@@ -24,6 +25,20 @@ public class MainCommand implements CommandExecutor {
                         player.sendMessage(line);
                     }
                     return true;
+                } else if (args[0].equalsIgnoreCase("setLobby")) {
+                    Main.setLobbyLocation(player.getLocation());
+                    Main.getConfiguration().set("Configuration.Lobby.Location", Utils.getStringFromLocation(player.getLocation()));
+                    Main.getConfiguration().save();
+                    player.sendMessage("Lobby location set");
+                    return true;
+                } else if (args[0].equalsIgnoreCase("forceStart")) {
+                    Arena arena = ArenaManager.getManager().getPlayerArena(player);
+                    if (arena == null) {
+                        player.sendMessage("Solo arena");
+                        return true;
+                    }
+                    arena.initStarting(true);
+                    player.sendMessage("El inicio a sido forzado.");
                 } else if (args[0].equalsIgnoreCase("createArena") && args.length == 2) {
                     player.sendMessage(ArenaManager.getManager().createArena(args[1]) ? "Arena creada" : "La arena ya existe");
                     return true;
@@ -47,6 +62,10 @@ public class MainCommand implements CommandExecutor {
                     Arena arena = ArenaManager.getManager().getArenaByID(args[1]);
                     if (arena == null) {
                         player.sendMessage("La arena no existe");
+                        return true;
+                    }
+                    if (arena.getStatus() == Status.PLAYING) {
+                        player.sendMessage("No puedes desactivar la arena mientras esta en juego!");
                         return true;
                     }
                     arena.setEnabled(false);

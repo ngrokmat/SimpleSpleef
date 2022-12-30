@@ -24,11 +24,11 @@ public class BuildCommand implements CommandExecutor {
                 }
                 if (Utils.getBuilders().contains(player)) {
                     Utils.getBuilders().remove(player);
-                    String message = Utils.getMessage("Messages.Commands.Build Command.Build Mode Enabled");
+                    String message = Utils.getMessage("Messages.Commands.Build Command.Build Mode Disabled");
                     player.sendMessage(message);
                 } else {
                     Utils.getBuilders().add(player);
-                    String message = Utils.getMessage("Messages.Commands.Build Command.Build Mode Disabled");
+                    String message = Utils.getMessage("Messages.Commands.Build Command.Build Mode Enabled");
                     player.sendMessage(message);
                 }
             }

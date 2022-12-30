@@ -1,27 +1,23 @@
 package io.thadow.simplespleef.listeners;
 
-import io.thadow.simplespleef.Main;
 import io.thadow.simplespleef.api.arena.DeathMode;
 import io.thadow.simplespleef.api.arena.Status;
 import io.thadow.simplespleef.api.player.SpleefPlayer;
-import io.thadow.simplespleef.api.playerdata.PlayerData;
 import io.thadow.simplespleef.arena.Arena;
 import io.thadow.simplespleef.items.ItemBuilder;
 import io.thadow.simplespleef.managers.PlayerDataManager;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Egg;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockCanBuildEvent;
-import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.ItemSpawnEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -136,14 +132,41 @@ public class ArenaListener implements Listener {
             }
         }
         if (event.getDamager() instanceof Snowball) {
+            Snowball snowball = (Snowball) event.getDamager();
+            if (snowball.getShooter() instanceof Player && event.getEntity() instanceof Player) {
+                Player victim = (Player) event.getEntity();
+                Player shooter = (Player) snowball.getShooter();
+                if (victim == shooter) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
             event.setDamage(0.01D);
             return;
         }
         if (event.getDamager() instanceof Arrow) {
+            Arrow arrow = (Arrow) event.getDamager();
+            if (arrow.getShooter() instanceof Player && event.getEntity() instanceof Player) {
+                Player victim = (Player) event.getEntity();
+                Player shooter = (Player) arrow.getShooter();
+                if (victim == shooter) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
             event.setDamage(0.01D);
             return;
         }
         if (event.getDamager() instanceof Egg) {
+            Egg egg = (Egg) event.getDamager();
+            if (egg.getShooter() instanceof Player && event.getEntity() instanceof Player) {
+                Player victim = (Player) event.getEntity();
+                Player shooter = (Player) egg.getShooter();
+                if (victim == shooter) {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
             event.setDamage(0.01D);
         }
     }

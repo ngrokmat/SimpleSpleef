@@ -4,19 +4,19 @@ import io.thadow.simplespleef.api.server.VersionHandler;
 import io.thadow.simplespleef.api.storage.StorageType;
 import io.thadow.simplespleef.arena.Arena;
 import io.thadow.simplespleef.commands.*;
-import io.thadow.simplespleef.listeners.ArenaListener;
-import io.thadow.simplespleef.listeners.PlayerListener;
-import io.thadow.simplespleef.listeners.SignsListener;
+import io.thadow.simplespleef.listeners.*;
 import io.thadow.simplespleef.managers.ArenaManager;
 import io.thadow.simplespleef.managers.PlayerDataManager;
 import io.thadow.simplespleef.managers.ScoreboardManager;
-import io.thadow.simplespleef.managers.SignsManager;
+import io.thadow.simplespleef.menu.Menu;
 import io.thadow.simplespleef.playerdata.Storage;
+import io.thadow.simplespleef.utils.Utils;
 import io.thadow.simplespleef.utils.configuration.MainConfiguration;
-import io.thadow.simplespleef.utils.configuration.MenusConfiguration;
+import io.thadow.simplespleef.menu.configuration.MenusConfiguration;
 import io.thadow.simplespleef.utils.configuration.ScoreboardsConfiguration;
 import io.thadow.simplespleef.utils.configuration.SignsConfiguration;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
@@ -38,10 +38,10 @@ public class Main extends JavaPlugin {
     private static SignsConfiguration signsConfiguration;
     @Getter
     private static ScoreboardsConfiguration scoreboardsConfiguration;
-    @Getter
-    private static MenusConfiguration menusConfiguration;
+    @Getter @Setter
+    private static Location lobbyLocation;
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked"})
     @Override
     public void onLoad() {
         super.onLoad();
@@ -73,20 +73,26 @@ public class Main extends JavaPlugin {
         configuration = new MainConfiguration("configuration", getDataFolder().toString());
         signsConfiguration = new SignsConfiguration("signs", getDataFolder().toString());
         scoreboardsConfiguration = new ScoreboardsConfiguration("scoreboards", getDataFolder().toString());
-        menusConfiguration = new MenusConfiguration("menus", getDataFolder().toString());
+        Menu.configuration = new MenusConfiguration("menus", getDataFolder().toString());
+        lobbyLocation = Utils.getLocationFromConfig(configuration, "Configuration.Lobby.Location");
         StorageType storageType = StorageType.valueOf(configuration.getString("Configuration.Storage.Type"));
         Storage.getStorage().setupStorage(storageType);
         PlayerDataManager.getManager().loadPlayers();
-
         registerCommand(new MainCommand(), "simplespleef");
         registerCommand(new JoinCommand(), "join");
         registerCommand(new LeaveCommand(), "leave");
         registerCommand(new BuildCommand(), "build");
         registerCommand(new PartyCommand(), "party");
-        registerListeners(new SignsListener(), new PlayerListener(), new ArenaListener());
+        registerListeners(new SignsListener(),
+                new PlayerListener(),
+                new ArenaListener(),
+                new MenusListener(),
+                new ArenaEventsListener(),
+                new PartyListener());
         ArenaManager.getManager().loadArenas();
         ScoreboardManager.getManager().run();
         Storage.getStorage().startSaveTask();
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     }
 
     @Override

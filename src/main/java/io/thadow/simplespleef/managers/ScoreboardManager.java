@@ -19,7 +19,7 @@ public class ScoreboardManager {
     @Getter
     private static ScoreboardManager manager = new ScoreboardManager();
 
-    private static void updateLobbyScoreboard(SpleefPlayer player) {
+    public static void updateLobbyScoreboard(SpleefPlayer player) {
         String title = getPath("Scoreboards.Lobby.Title");
         List<String> lines = getListPath("Scoreboards.Lobby.Lines");
         List<String> newLines = new ArrayList<>();
@@ -40,7 +40,7 @@ public class ScoreboardManager {
         scoreboard.updateLines(newLines);
     }
 
-    private static void updateWaitingScoreboard(SpleefPlayer player) {
+    public static void updateWaitingScoreboard(SpleefPlayer player) {
         Arena arena = player.getArena();
         String title = getPath("Scoreboards.Waiting.Title");
         List<String> lines = getListPath("Scoreboards.Waiting.Lines");
@@ -63,7 +63,7 @@ public class ScoreboardManager {
         scoreboard.updateLines(newLines);
     }
 
-    private static void updateStartingScoreboard(SpleefPlayer player) {
+    public static void updateStartingScoreboard(SpleefPlayer player) {
         Arena arena = player.getArena();
         String title = getPath("Scoreboards.Starting.Title");
         List<String> lines = getListPath("Scoreboards.Starting.Lines");
@@ -87,7 +87,7 @@ public class ScoreboardManager {
         scoreboard.updateLines(newLines);
     }
 
-    private static void updatePlayingScoreboard(SpleefPlayer player) {
+    public static void updatePlayingScoreboard(SpleefPlayer player) {
         Arena arena = player.getArena();
         String title = getPath("Scoreboards.Playing.Title");
         List<String> lines = getListPath("Scoreboards.Playing.Lines");
@@ -111,7 +111,7 @@ public class ScoreboardManager {
         scoreboard.updateLines(newLines);
     }
 
-    private static void updateEndingScoreboard(SpleefPlayer player) {
+    public static void updateEndingScoreboard(SpleefPlayer player) {
         Arena arena = player.getArena();
         String title = getPath("Scoreboards.Ending.Title");
         List<String> lines = getListPath("Scoreboards.Ending.Lines");

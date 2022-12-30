@@ -72,7 +72,7 @@ public class Storage {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
             save();
             Main.getInstance().getLogger().log(Level.INFO, "Data has been saved.");
-        }, 20L * 60 * delay, 0L);
+        }, 0L, 20L * 60 * delay);
     }
 
     public void save() {

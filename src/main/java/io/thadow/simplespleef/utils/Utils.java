@@ -1,13 +1,17 @@
 package io.thadow.simplespleef.utils;
 
 import io.thadow.simplespleef.Main;
+import io.thadow.simplespleef.api.arena.Status;
 import io.thadow.simplespleef.api.configuration.ConfigurationFile;
 import io.thadow.simplespleef.arena.Arena;
 import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Utils {
@@ -108,6 +112,21 @@ public class Utils {
         return format(status);
     }
 
+    public static boolean sendPlayerTo(Player player, String server) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            DataOutputStream out = new DataOutputStream(baos);
+            out.writeUTF("Connect");
+            out.writeUTF(server);
+            player.sendPluginMessage(Main.getInstance(), "BungeeCord", baos.toByteArray());
+            baos.close();
+            out.close();
+            return true;
+        } catch (Exception exception) {
+            return false;
+        }
+    }
+
     public static Location getLocationFromConfig(ConfigurationFile configuration, String path) {
         if (!configuration.contains(path)) {
             return null;
@@ -130,5 +149,36 @@ public class Utils {
         float yaw = location.getYaw();
         float pitch = location.getPitch();
         return world + ";" + x + ";" + y + ";" + z + ";" + yaw + ";" + pitch;
+    }
+
+    public static List<Arena> getSorted(List<Arena> arenas) {
+        List<Arena> sorted = new ArrayList<>(arenas);
+        sorted.sort(new Comparator<>() {
+            public int compare(Arena arena_1, Arena arena_2) {
+                if (arena_1.getStatus() == Status.STARTING && arena_2.getStatus() == Status.STARTING) {
+                    return Integer.compare(arena_2.getPlayers().size(), arena_1.getPlayers().size());
+                } else if (arena_1.getStatus() == Status.STARTING && arena_2.getStatus() != Status.STARTING) {
+                    return -1;
+                } else if (arena_2.getStatus() == Status.STARTING && arena_1.getStatus() != Status.STARTING) {
+                    return 1;
+                } else if (arena_1.getStatus() == Status.WAITING && arena_2.getStatus() == Status.WAITING) {
+                    return Integer.compare(arena_2.getPlayers().size(), arena_1.getPlayers().size());
+                } else if (arena_1.getStatus() == Status.WAITING && arena_2.getStatus() != Status.WAITING) {
+                    return -1;
+                } else if (arena_2.getStatus() == Status.WAITING && arena_1.getStatus() == Status.WAITING) {
+                    return 1;
+                } else if (arena_1.getStatus() == Status.PLAYING && arena_2.getStatus() == Status.PLAYING) {
+                    return 0;
+                } else if (arena_1.getStatus() == Status.PLAYING && arena_2.getStatus() != Status.PLAYING) {
+                    return -1;
+                } else return 1;
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                return obj instanceof Arena;
+            }
+        });
+        return sorted;
     }
 }
