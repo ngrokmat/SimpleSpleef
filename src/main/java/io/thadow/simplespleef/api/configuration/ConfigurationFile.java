@@ -84,14 +84,6 @@ public class ConfigurationFile {
         return configuration.getConfigurationSection(path);
     }
 
-    public String getConfigName() {
-        return configName;
-    }
-
-    public void setConfigName(String configName) {
-        this.configName = configName;
-    }
-
     public boolean isFirstTime() {
         return firstTime;
     }

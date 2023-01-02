@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 public class LocalStorage {
     private static FileConfiguration configuration = null;
@@ -104,8 +105,8 @@ public class LocalStorage {
 
     public static void addLose(Player player) {
         String uuid = player.getUniqueId().toString();
-        Integer currentWins = getWins(player);
-        get().set("Data." + uuid + ".Losses", currentWins + 1);
+        Integer currentLosses = getLosses(player);
+        get().set("Data." + uuid + ".Losses", currentLosses + 1);
         PlayerData playerData = PlayerDataManager.getManager().getPlayerData(player.getName());
         playerData.addLose();
     }
@@ -122,6 +123,7 @@ public class LocalStorage {
             players.add(new PlayerData(playerName, uuid, wins, losses));
         }
         Storage.setSetupFinished(true);
+        Main.getInstance().getLogger().log(Level.INFO, "Data has been fully loaded. Type: LOCAL");
         return players;
     }
 

@@ -1,7 +1,6 @@
 package io.thadow.simplespleef.commands;
 
 import io.thadow.simplespleef.api.party.Party;
-import io.thadow.simplespleef.api.playerdata.PlayerData;
 import io.thadow.simplespleef.arena.Arena;
 import io.thadow.simplespleef.managers.ArenaManager;
 import io.thadow.simplespleef.managers.PartyManager;
@@ -21,12 +20,12 @@ public class JoinCommand implements CommandExecutor {
             if (player.hasPermission("simplespleef.commands.join")) {
                 if (args.length >= 1) {
                     if (args[0].equalsIgnoreCase("random")) {
-                        if (!ArenaManager.getManager().joinRandom(player, PlayerDataManager.getManager().getSpleefPlayer(player).isSpectating())) {
-                            if (ArenaManager.getManager().getPlayerArena(player) != null) {
-                                ArenaManager.getManager().handleLeave(PlayerDataManager.getManager().getSpleefPlayer(player), PlayerDataManager.getManager().getSpleefPlayer(player).getArena(), true);
-                            }
+                        Arena arena = PlayerDataManager.getManager().getSpleefPlayer(player).getArena();
+                        if (arena != null) {
+                            player.sendMessage("Solo fuera de la arena!");
                             return true;
                         }
+                        ArenaManager.getManager().joinRandom(player, false);
                         return true;
                     }
                     StringBuilder s = new StringBuilder(args[0]);

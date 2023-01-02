@@ -2,7 +2,7 @@ package io.thadow.simplespleef.arena;
 
 import io.thadow.simplespleef.Main;
 import io.thadow.simplespleef.api.arena.DeathMode;
-import io.thadow.simplespleef.api.arena.SpleefMode;
+import io.thadow.simplespleef.api.arena.StartTeleportMode;
 import io.thadow.simplespleef.api.arena.Status;
 import io.thadow.simplespleef.api.arena.TeleportDeathMode;
 import io.thadow.simplespleef.api.event.PlayerDeathInArenaEvent;
@@ -14,9 +14,7 @@ import io.thadow.simplespleef.items.ItemBuilder;
 import io.thadow.simplespleef.items.ItemGiver;
 import io.thadow.simplespleef.lib.titles.Titles;
 import io.thadow.simplespleef.managers.PlayerDataManager;
-import io.thadow.simplespleef.managers.ScoreboardManager;
 import io.thadow.simplespleef.managers.SignsManager;
-import io.thadow.simplespleef.playerdata.Storage;
 import io.thadow.simplespleef.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,7 +32,6 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Arena {
     @Getter
@@ -54,15 +51,17 @@ public class Arena {
     @Getter
     Location waitLocation, spawnLocation;
     @Getter
+    Location corner1, corner2;
+    @Getter
     Status status;
     @Getter @Setter
     TeleportDeathMode teleportDeathMode;
     @Getter @Setter
-    SpleefMode spleefMode;
-    @Getter @Setter
     DeathMode deathMode;
+    @Getter @Setter
+    StartTeleportMode startTeleportMode;
     @Getter
-    int time, maxTime, endingTime, reEnableTime;
+    int waitToStartTime, maxTime, endingTime, reEnableTime, shortToTime;
     int fwTaskID, initTaskID, gameTimeTaskID;
     @Getter
     int yLevelMode;
@@ -93,7 +92,7 @@ public class Arena {
         deathMode = DeathMode.valueOf(configuration.getString("Death Mode.Mode"));
         yLevelMode = configuration.getInt("Death Mode.Y Level Mode.Y Level");
         teleportDeathMode = TeleportDeathMode.valueOf(configuration.getString("Teleport Death Mode.Mode"));
-        spleefMode = SpleefMode.valueOf(configuration.getString("Spleef Mode.Mode"));
+        startTeleportMode = StartTeleportMode.valueOf(configuration.getString("Start Teleport Mode.Mode"));
         snowSpecialEnabled = configuration.getBoolean("Spleef Mode.Special To Give.Snow.Enabled");
         eggSpecialEnabled = configuration.getBoolean("Spleef Mode.Special To Give.Egg.Enabled");
         bowSpecialEnabled = configuration.getBoolean("Spleef Mode.Special To Give.Bow.Enabled");
@@ -104,16 +103,19 @@ public class Arena {
         arenaName = configuration.getString("Arena Name");
         maxPlayers = configuration.getInt("Max Players");
         minPlayers = configuration.getInt("Min Players");
-        maxTime = configuration.getInt("Max Time");
         endingTime = configuration.getInt("Ending Time");
         reEnableTime = configuration.getInt("Re-Enable Time");
-        time = configuration.getInt("Wait To Start Time");
+        maxTime = configuration.getInt("Max Time");
+        waitToStartTime = configuration.getInt("Wait To Start Time");
+        shortToTime = configuration.getInt("Full Short Time");
         waitLocation = Utils.getLocationFromConfig(configuration, "Wait Location");
         spawnLocation = Utils.getLocationFromConfig(configuration, "Spawn Location");
+        corner1 = Utils.getLocationFromConfig(configuration, "Corner 1");
+        corner2 = Utils.getLocationFromConfig(configuration, "Corner 2");
 
         for (String key : configuration.getConfigurationSection("Inventory.Items").getKeys(false)) {
-            if (key.startsWith("Slot-")) {
-                int slot = Integer.parseInt(key.replace("Slot-", ""));
+            if (key.startsWith("Slot ")) {
+                int slot = Integer.parseInt(key.replace("Slot ", ""));
                 String material = configuration.getString("Inventory.Items." + key + ".Material");
                 String name = configuration.getString("Inventory.Items." + key + ".Name");
                 boolean unbreakable = configuration.getBoolean("Inventory.Items." + key + ".Unbreakable");
@@ -141,15 +143,27 @@ public class Arena {
     }
 
     public void start() {
-        setWinner(null);
         setStatus(Status.PLAYING);
+        setWinner(null);
+        if (getTotalPlayers().size() == 0) {
+            end(false, false);
+            return;
+        }
         for (SpleefPlayer player : getTotalPlayers()) {
-            player.getPlayer().getInventory().clear();
-            player.teleport(spawnLocation);
+            if (Main.getConfiguration().getBoolean("Configuration.Arenas.Clear Inventory")) {
+                player.getPlayer().getInventory().clear();
+            }
+            if (Main.getConfiguration().getBoolean("Configuration.Arenas.Clear Armor Contents")) {
+                player.getPlayer().getInventory().setArmorContents(null);
+            }
+            if (startTeleportMode != StartTeleportMode.SAME_LOCATION) {
+                player.teleport(spawnLocation);
+            }
             for (int i : items.keySet()) {
                 player.getPlayer().getInventory().setItem((i - 1), items.get(i));
             }
-            player.getPlayer().setGameMode(GameMode.SURVIVAL);
+            String mode = Main.getConfiguration().getString("Configuration.Arenas.Playing GameMode");
+            player.getPlayer().setGameMode(GameMode.valueOf(mode));
             ItemGiver.getGiver().giveArenaPlayingItems(player.getPlayer());
         }
         List<String> message = Main.getConfiguration().getStringList("Messages.Arenas.Started.Message");
@@ -173,172 +187,264 @@ public class Arena {
                 Titles.sendTitle(player.getPlayer(), fadeIn, stay, fadeOut, title, subTitle);
             }
         }
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-            gameTimeTaskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
-                maxTime--;
-                if (maxTime == 0) {
-                    end(false);
-                    Bukkit.getScheduler().cancelTask(gameTimeTaskID);
-                }
-            }, 0L, 20L);
-        }, 20L);
+        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> gameTimeTaskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
+            maxTime--;
+            if (maxTime == 0) {
+                end(false, true);
+                Bukkit.getScheduler().cancelTask(gameTimeTaskID);
+            }
+        }, 0L, 20L), 20L);
     }
 
-    public void end(boolean closingServer) {
+    public void end(boolean closingServer, boolean draw) {
+        Bukkit.getScheduler().cancelTask(initTaskID);
+        Bukkit.getScheduler().cancelTask(gameTimeTaskID);
+        setStatus(Status.ENDING);
         if (closingServer) {
-            setWinner(null);
             setStatus(Status.DISABLED);
             for (SpleefPlayer player : getTotalPlayers()) {
-                removePlayer(player, true);
+                player.setArena(null);
+                player.setSpectating(false);
+                Utils.teleportToLobby(player);
             }
-            for (Location brokenLocation : brokenBlocks.keySet()) {
-                brokenLocation.getBlock().setType(brokenBlocks.get(brokenLocation));
-                brokenLocation.getBlock().getState().update();
-            }
+            players.clear();
+            spectatingPlayers.clear();
             return;
         }
 
-        setStatus(Status.ENDING);
+        if (draw) {
+
+        }
+
+        for (SpleefPlayer player : getPlayers()) {
+            String mode = Main.getConfiguration().getString("Configuration.Arenas.Ending GameMode");
+            player.getPlayer().setGameMode(GameMode.valueOf(mode));
+        }
+
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             for (SpleefPlayer player : getTotalPlayers()) {
-                removePlayer(player, true);
+                player.teleport(Main.getLobbyLocation());
                 for (Player players : Bukkit.getOnlinePlayers()) {
                     if (!players.canSee(player.getPlayer())) {
-                        players.showPlayer(players.getPlayer());
+                        players.showPlayer(player.getPlayer());
                     }
                 }
+                if (Main.getConfiguration().getBoolean("Configuration.Lobby.Clear Inventory")) {
+                    player.getPlayer().getInventory().clear();
+                }
+                if (Main.getConfiguration().getBoolean("Configuration.Lobby.Clear Armor Contents")) {
+                    player.getPlayer().getInventory().setArmorContents(null);
+                }
+                if (Main.getConfiguration().getBoolean("Configuration.Lobby.Allow Flight")) {
+                    player.getPlayer().setAllowFlight(true);
+                }
+                if (Main.getConfiguration().getBoolean("Configuration.Lobby.Set Flying")) {
+                    player.getPlayer().setFlying(true);
+                }
+                String mode = Main.getConfiguration().getString("Configuration.Lobby.GameMode");
+                player.getPlayer().setGameMode(GameMode.valueOf(mode));
+                player.getPlayer().setHealth(20.0D);
+                player.getPlayer().removePotionEffect(PotionEffectType.INVISIBILITY);
+                PlayerLeaveArenaEvent event = new PlayerLeaveArenaEvent(this, player.getPlayer(), player);
+                Bukkit.getPluginManager().callEvent(event);
+                ItemGiver.getGiver().giveLobbyItems(player.getPlayer());
+                player.setArena(null);
+                player.setSpectating(false);
             }
-            getPlayers().clear();
-            getSpectatingPlayers().clear();
-            getTotalPlayers().clear();
+
+            players.clear();
+            spectatingPlayers.clear();
+
             setStatus(Status.RESTARTING);
 
             for (Location brokenLocation : brokenBlocks.keySet()) {
                 brokenLocation.getBlock().setType(brokenBlocks.get(brokenLocation));
-                brokenLocation.getBlock().getState().update();
+                brokenLocation.getBlock().getState().update(true);
             }
-
-            brokenBlocks.clear();
 
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
                 forceStarted = false;
                 setWinner(null);
-                time = configuration.getInt("Wait To Start Time");
                 maxTime = configuration.getInt("Max Time");
+                waitToStartTime = configuration.getInt("Wait To Start Time");
                 setStatus(Status.WAITING);
-            }, 20L * getReEnableTime());
-        }, 20L * getEndingTime());
+            }, 20L * reEnableTime);
+        }, 20L * endingTime);
     }
 
     public void endWithWinner(Player winner) {
-        setWinner(winner);
-        Storage.getStorage().addWin(winner);
+        Bukkit.getScheduler().cancelTask(initTaskID);
+        Bukkit.getScheduler().cancelTask(gameTimeTaskID);
         setStatus(Status.ENDING);
+        setWinner(winner);
 
-        fwTaskID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
-            if (getStatus() == Status.ENDING && getPlayers().contains(PlayerDataManager.getManager().getSpleefPlayer(winner)) && winner != null) {
+        SpleefPlayer winnerSpleef = PlayerDataManager.getManager().getSpleefPlayer(winner);
+        int ticks = Main.getConfiguration().getInt("Configuration.Arenas.Winner Fireworks Ticks");
+        if (winner != null && status == Status.ENDING) {
+            fwTaskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
+                if (!getPlayers().contains(winnerSpleef)) {
+                    Bukkit.getScheduler().cancelTask(fwTaskID);
+                    return;
+                }
                 fireworks(winner);
-            } else {
-                Bukkit.getScheduler().cancelTask(fwTaskID);
-            }
-        }, 0L, 20L);
+            }, 0L, ticks);
+        }
+
+        for (SpleefPlayer player : getPlayers()) {
+            String mode = Main.getConfiguration().getString("Configuration.Arenas.Ending GameMode");
+            player.getPlayer().setGameMode(GameMode.valueOf(mode));
+        }
 
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             for (SpleefPlayer player : getTotalPlayers()) {
-                removePlayer(player, true);
+                player.teleport(Main.getLobbyLocation());
                 for (Player players : Bukkit.getOnlinePlayers()) {
                     if (!players.canSee(player.getPlayer())) {
-                        players.showPlayer(players.getPlayer());
+                        players.showPlayer(player.getPlayer());
                     }
                 }
+                if (Main.getConfiguration().getBoolean("Configuration.Lobby.Clear Inventory")) {
+                    player.getPlayer().getInventory().clear();
+                }
+                if (Main.getConfiguration().getBoolean("Configuration.Lobby.Clear Armor Contents")) {
+                    player.getPlayer().getInventory().setArmorContents(null);
+                }
+                if (Main.getConfiguration().getBoolean("Configuration.Lobby.Allow Flight")) {
+                    player.getPlayer().setAllowFlight(true);
+                }
+                if (Main.getConfiguration().getBoolean("Configuration.Lobby.Set Flying")) {
+                    player.getPlayer().setFlying(true);
+                }
+                String mode = Main.getConfiguration().getString("Configuration.Lobby.GameMode");
+                player.getPlayer().setGameMode(GameMode.valueOf(mode));
+                player.getPlayer().setHealth(20.0D);
+                player.getPlayer().removePotionEffect(PotionEffectType.INVISIBILITY);
+                PlayerLeaveArenaEvent event = new PlayerLeaveArenaEvent(this, player.getPlayer(), player);
+                Bukkit.getPluginManager().callEvent(event);
+                ItemGiver.getGiver().giveLobbyItems(player.getPlayer());
+                player.setArena(null);
+                player.setSpectating(false);
             }
-            getPlayers().clear();
-            getSpectatingPlayers().clear();
-            getTotalPlayers().clear();
+
+            players.clear();
+            spectatingPlayers.clear();
+
             setStatus(Status.RESTARTING);
 
             for (Location brokenLocation : brokenBlocks.keySet()) {
                 brokenLocation.getBlock().setType(brokenBlocks.get(brokenLocation));
-                brokenLocation.getBlock().getState().update();
+                brokenLocation.getBlock().getState().update(true);
             }
-
-            brokenBlocks.clear();
 
             Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
                 forceStarted = false;
                 setWinner(null);
-                time = configuration.getInt("Wait To Start Time");
                 maxTime = configuration.getInt("Max Time");
+                waitToStartTime = configuration.getInt("Wait To Start Time");
                 setStatus(Status.WAITING);
-            }, 20L * getReEnableTime());
-        }, 20L * getEndingTime());
+            }, 20L * reEnableTime);
+        }, 20L * endingTime);
     }
 
     public void checkArena() {
         if (forceStarted) {
             return;
         }
+        if (players.size() >= maxPlayers && status == Status.STARTING) {
+            Bukkit.getScheduler().cancelTask(initTaskID);
+            initFullCountdown();
+            return;
+        }
         if (getStatus() != Status.STARTING) {
             if (players.size() >= minPlayers) {
-                initStarting(false);
+                initCountdown(false);
             }
         }
     }
 
-    public void initStarting(boolean forceStarting) {
+    public void initFullCountdown() {
+        waitToStartTime = shortToTime;
+        broadcast("La arena se ha lleando!");
+        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> initTaskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
+            if (players.size() == 0) {
+                Bukkit.getScheduler().cancelTask(initTaskID);
+                setStatus(Status.WAITING);
+                setWaitToStartTime(getConfiguration().getInt("Wait To Start Time"), false);
+                return;
+            }
+            waitToStartTime--;
+            if (waitToStartTime == 0) {
+                start();
+                Bukkit.getScheduler().cancelTask(initTaskID);
+                return;
+            }
+            if (Main.getConfiguration().contains("Messages.Arenas.Starting.Announce.Second " + waitToStartTime + ".Message")) {
+                String message = Utils.getMessage("Messages.Arenas.Starting.Announce.Second " + waitToStartTime + ".Message");
+                message = message.replace("%time%", String.valueOf(waitToStartTime));
+                broadcast(message);
+            }
+            if (Main.getConfiguration().getBoolean("Messages.Arenas.Starting.Announce.Second " + waitToStartTime + ".Sound.Enabled")) {
+                String soundPath = Main.getConfiguration().getString("Messages.Arenas.Starting.Announce.Second " + waitToStartTime + ".Sound.Sound");
+                for (SpleefPlayer player : getTotalPlayers()) {
+                    Utils.playSound(player.getPlayer(), soundPath);
+                }
+            }
+            if (Main.getConfiguration().getBoolean("Messages.Arenas.Starting.Announce.Second " + waitToStartTime + ".Titles.Enabled")) {
+                String title = Main.getConfiguration().getString("Messages.Arenas.Starting.Announce.Second " + waitToStartTime + ".Titles.Title");
+                title = title.replace("%time%", String.valueOf(waitToStartTime));
+                String subTitle = Main.getConfiguration().getString("Messages.Arenas.Starting.Announce.Second " + waitToStartTime + ".Titles.Sub Title");
+                subTitle = subTitle.replace("%time%", String.valueOf(waitToStartTime));
+                int fadeIn = Main.getConfiguration().getInt("Messages.Arenas.Starting.Titles Settings.Fade In");
+                int stay = Main.getConfiguration().getInt("Messages.Arenas.Starting.Titles Settings.Stay");
+                int fadeOut = Main.getConfiguration().getInt("Messages.Arenas.Starting.Titles Settings.Fade Out");
+                for (SpleefPlayer player : getTotalPlayers()) {
+                    Titles.sendTitle(player.getPlayer(), fadeIn, stay, fadeOut, title, subTitle);
+                }
+            }
+        }, 0L, 20L), 20L);
+    }
+
+    public void initCountdown(boolean forceStarting) {
         this.forceStarted = forceStarting;
         setStatus(Status.STARTING);
-        broadcast("Iniciando en: " + time);
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-            initTaskID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
-                if (players.size() < minPlayers && !forceStarting) {
-                    Bukkit.getScheduler().cancelTask(initTaskID);
-                    setStatus(Status.WAITING);
-                    String message = Utils.getMessage("Messages.Arenas.Starting.Countdown Stopped");
-                    broadcast(message);
-                    setTime(getConfiguration().getInt("Wait To Start Time"), false);
-                    return;
-                }
-                if (players.size() == 0) {
-                    Bukkit.getScheduler().cancelTask(initTaskID);
-                    setStatus(Status.WAITING);
-                    setTime(getConfiguration().getInt("Wait To Start Time"), false);
-                    return;
-                }
+        broadcast("Iniciando en: " + waitToStartTime);
+        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> initTaskID = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
+            if (players.size() == 0) {
+                Bukkit.getScheduler().cancelTask(initTaskID);
+                setStatus(Status.WAITING);
+                setWaitToStartTime(getConfiguration().getInt("Wait To Start Time"), false);
+                return;
+            }
+            waitToStartTime--;
+            if (waitToStartTime == 0) {
+                start();
+                Bukkit.getScheduler().cancelTask(initTaskID);
+                return;
+            }
+            if (Main.getConfiguration().contains("Messages.Arenas.Starting.Announce.Second " + waitToStartTime + ".Message")) {
+                String message = Utils.getMessage("Messages.Arenas.Starting.Announce.Second " + waitToStartTime + ".Message");
+                message = message.replace("%time%", String.valueOf(waitToStartTime));
+                broadcast(message);
+            }
+            if (Main.getConfiguration().getBoolean("Messages.Arenas.Starting.Announce.Second " + waitToStartTime + ".Sound.Enabled")) {
+                String soundPath = Main.getConfiguration().getString("Messages.Arenas.Starting.Announce.Second " + waitToStartTime + ".Sound.Sound");
                 for (SpleefPlayer player : getTotalPlayers()) {
-                    ScoreboardManager.updateStartingScoreboard(player);
+                    Utils.playSound(player.getPlayer(), soundPath);
                 }
-                time--;
-                if (time == 0) {
-                    start();
-                    Bukkit.getScheduler().cancelTask(initTaskID);
-                    return;
+            }
+            if (Main.getConfiguration().getBoolean("Messages.Arenas.Starting.Announce.Second " + waitToStartTime + ".Titles.Enabled")) {
+                String title = Main.getConfiguration().getString("Messages.Arenas.Starting.Announce.Second " + waitToStartTime + ".Titles.Title");
+                title = title.replace("%time%", String.valueOf(waitToStartTime));
+                String subTitle = Main.getConfiguration().getString("Messages.Arenas.Starting.Announce.Second " + waitToStartTime + ".Titles.Sub Title");
+                subTitle = subTitle.replace("%time%", String.valueOf(waitToStartTime));
+                int fadeIn = Main.getConfiguration().getInt("Messages.Arenas.Starting.Titles Settings.Fade In");
+                int stay = Main.getConfiguration().getInt("Messages.Arenas.Starting.Titles Settings.Stay");
+                int fadeOut = Main.getConfiguration().getInt("Messages.Arenas.Starting.Titles Settings.Fade Out");
+                for (SpleefPlayer player : getTotalPlayers()) {
+                    Titles.sendTitle(player.getPlayer(), fadeIn, stay, fadeOut, title, subTitle);
                 }
-                if (Main.getConfiguration().contains("Messages.Arenas.Starting.Announce.Second " + time + ".Message")) {
-                    String message = Utils.getMessage("Messages.Arenas.Starting.Announce.Second " + time + ".Message");
-                    message = message.replace("%time%", String.valueOf(time));
-                    broadcast(message);
-                }
-                if (Main.getConfiguration().getBoolean("Messages.Arenas.Starting.Announce.Second " + time + ".Sound.Enabled")) {
-                    String soundPath = Main.getConfiguration().getString("Messages.Arenas.Starting.Announce.Second " + time + ".Sound.Sound");
-                    for (SpleefPlayer player : getTotalPlayers()) {
-                        Utils.playSound(player.getPlayer(), soundPath);
-                    }
-                }
-                if (Main.getConfiguration().getBoolean("Messages.Arenas.Starting.Announce.Second " + time + ".Titles.Enabled")) {
-                    String title = Main.getConfiguration().getString("Messages.Arenas.Starting.Announce.Second " + time + ".Titles.Title");
-                    title = title.replace("%time%", String.valueOf(time));
-                    String subTitle = Main.getConfiguration().getString("Messages.Arenas.Starting.Announce.Second " + time + ".Titles.Sub Title");
-                    subTitle = subTitle.replace("%time%", String.valueOf(time));
-                    int fadeIn = Main.getConfiguration().getInt("Messages.Arenas.Starting.Titles Settings.Fade In");
-                    int stay = Main.getConfiguration().getInt("Messages.Arenas.Starting.Titles Settings.Stay");
-                    int fadeOut = Main.getConfiguration().getInt("Messages.Arenas.Starting.Titles Settings.Fade Out");
-                    for (SpleefPlayer player : getTotalPlayers()) {
-                        Titles.sendTitle(player.getPlayer(), fadeIn, stay, fadeOut, title, subTitle);
-                    }
-                }
-            }, 0L, 20L);
-        }, 20L);
+            }
+        }, 0L, 20L), 20L);
     }
 
     public void fireworks(Player player) {
@@ -368,27 +474,54 @@ public class Arena {
                 }
             }
         }
-        player.getPlayer().getInventory().clear();
-        player.getPlayer().getInventory().setArmorContents(null);
-        player.getPlayer().setHealth(20.0D);
-        player.getPlayer().setFlying(false);
-        player.getPlayer().setAllowFlight(false);
-        player.getPlayer().setGameMode(GameMode.ADVENTURE);
+        if (Main.getConfiguration().getBoolean("Configuration.Arenas.Clear Inventory")) {
+            player.getPlayer().getInventory().clear();
+        }
+        if (Main.getConfiguration().getBoolean("Configuration.Arenas.Clear Armor Contents")) {
+            player.getPlayer().getInventory().setArmorContents(null);
+        }
+        if (Main.getConfiguration().getBoolean("Configuration.Arenas.Allow Flight")) {
+            player.getPlayer().setAllowFlight(true);
+        }
+        if (Main.getConfiguration().getBoolean("Configuration.Arenas.Set Flying")) {
+            player.getPlayer().setFlying(true);
+        }
+        String mode = Main.getConfiguration().getString("Configuration.Arenas.Waiting GameMode");
+        player.getPlayer().setGameMode(GameMode.valueOf(mode));
         Utils.getBuilders().remove(player.getPlayer());
+        player.getPlayer().setHealth(20.0D);
         PlayerJoinArenaEvent event = new PlayerJoinArenaEvent(this, player.getPlayer(), player);
         Bukkit.getPluginManager().callEvent(event);
         ItemGiver.getGiver().giveArenaWaitingItems(player.getPlayer());
-        checkArena();
         String message = Utils.getMessage("Messages.Arenas.Player Join");
         message = message.replace("%player%", player.getName());
         message = message.replace("%current%", String.valueOf(getTotalPlayersSize()));
         message = message.replace("%max%", String.valueOf(getMaxPlayers()));
         broadcast(message);
+        checkArena();
+    }
+
+    public void remove(SpleefPlayer player) {
+        players.remove(player);
+        spectatingPlayers.remove(player);
+        player.getPlayer().getInventory().clear();
+        player.getPlayer().getInventory().setArmorContents(null);
+        player.getPlayer().setAllowFlight(false);
+        player.getPlayer().setFlying(false);
+        player.getPlayer().setHealth(20.0D);
+        player.getPlayer().removePotionEffect(PotionEffectType.INVISIBILITY);
+        PlayerLeaveArenaEvent event = new PlayerLeaveArenaEvent(this, player.getPlayer(), player);
+        Bukkit.getPluginManager().callEvent(event);
+        for (Player players : Bukkit.getOnlinePlayers()) {
+            if (!players.canSee(player.getPlayer())) {
+                players.showPlayer(player.getPlayer());
+            }
+        }
+        player.setArena(null);
+        player.setSpectating(false);
     }
 
     public void removePlayer(SpleefPlayer player, boolean silent) {
-        player.setArena(null);
-        player.setSpectating(false);
         players.remove(player);
         spectatingPlayers.remove(player);
         if (!silent) {
@@ -396,26 +529,26 @@ public class Arena {
             message = message.replace("%player%", player.getName());
             broadcast(message);
         }
-        player.getPlayer().teleport(Main.getLobbyLocation());
-        for (Player players : Bukkit.getOnlinePlayers()) {
-            if (player.isSpectating()) {
-                if (!players.canSee(player.getPlayer())) {
-                    players.showPlayer(player.getPlayer());
-                }
-            }
+        Utils.teleportToLobby(player);
+        if (status == Status.ENDING) {
+            return;
         }
-        player.getPlayer().setAllowFlight(false);
-        player.getPlayer().setFlying(false);
-        player.getPlayer().setHealth(20.0D);
-        player.getPlayer().setFoodLevel(20);
-        player.getPlayer().getInventory().clear();
-        player.getPlayer().getInventory().setArmorContents(null);
-        player.getPlayer().removePotionEffect(PotionEffectType.INVISIBILITY);
-        PlayerLeaveArenaEvent event = new PlayerLeaveArenaEvent(this, player.getPlayer(), player);
-        Bukkit.getPluginManager().callEvent(event);
-        ItemGiver.getGiver().giveLobbyItems(player.getPlayer());
+        if (getStatus() == Status.STARTING && getTotalPlayers().size() == 0) {
+            setStatus(Status.WAITING);
+            forceStarted = false;
+            return;
+        }
+        if (players.size() < minPlayers && !forceStarted && status == Status.STARTING) {
+            Bukkit.getScheduler().cancelTask(initTaskID);
+            setStatus(Status.WAITING);
+            String message = Utils.getMessage("Messages.Arenas.Starting.Countdown Stopped");
+            broadcast(message);
+            setWaitToStartTime(getConfiguration().getInt("Wait To Start Time"), false);
+            forceStarted = false;
+            return;
+        }
         if (getStatus() == Status.PLAYING && getPlayers().size() == 0) {
-            end(false);
+            end(false, false);
             return;
         }
         if (getStatus() == Status.PLAYING && getPlayers().size() == 1) {
@@ -428,31 +561,31 @@ public class Arena {
     }
 
     public void killPlayer(SpleefPlayer player) {
+        players.remove(player);
+        spectatingPlayers.add(player);
         setSpectating(player);
         PlayerDataManager.getManager().addPlayerLose(player.getPlayer());
-        player.getPlayer().setAllowFlight(true);
-        player.getPlayer().setFlying(true);
         player.getPlayer().setHealth(20.0D);
         player.getPlayer().setFoodLevel(20);
         player.getPlayer().getInventory().clear();
         player.getPlayer().getInventory().setArmorContents(null);
         player.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false));
+        String mode = Main.getConfiguration().getString("Configuration.Arenas.Spectating GameMode");
+        player.getPlayer().setGameMode(GameMode.valueOf(mode));
+        player.getPlayer().setAllowFlight(true);
+        player.getPlayer().setFlying(true);
         String message = Utils.getMessage("Messages.Arenas.Player Death");
         message = message.replace("%player%", player.getName());
         broadcast(message);
         PlayerDeathInArenaEvent event = new PlayerDeathInArenaEvent(this, player.getPlayer(), player);
         Bukkit.getPluginManager().callEvent(event);
         ItemGiver.getGiver().giveSpectatorItems(player.getPlayer());
-        if (getPlayers().size() == 0 && status == Status.PLAYING) {
-            end(false);
+        if (players.size() == 1 && status == Status.PLAYING) {
+            endWithWinner(players.get(0).getPlayer());
             return;
         }
-        if (getTotalPlayers().size() == 0 && status == Status.PLAYING) {
-            end(false);
-            return;
-        }
-        if (getPlayers().size() == 1 && status == Status.PLAYING) {
-            endWithWinner(getPlayers().get(0).getPlayer());
+        if (players.size() == 0 && status == Status.PLAYING) {
+            end(false, false);
         }
     }
 
@@ -468,8 +601,6 @@ public class Arena {
                 players.getPlayer().hidePlayer(player.getPlayer());
             }
         }
-        players.remove(player);
-        spectatingPlayers.add(player);
         player.setSpectating(true);
     }
 
@@ -607,18 +738,22 @@ public class Arena {
         configuration.save();
     }
 
+    public void setCorner1(Location location) {
+        corner1 = location;
+        configuration.set("Corner 1", Utils.getStringFromLocation(location));
+        configuration.save();
+    }
+
+    public void setCorner2(Location location) {
+        corner2 = location;
+        configuration.set("Corner 2", Utils.getStringFromLocation(location));
+        configuration.save();
+    }
+
     public void setStatus(Status status) {
         this.status = status;
         refreshSigns();
         SignsManager.getManager().updateSigns(this);
-    }
-
-    public void degreeTime() {
-        time--;
-    }
-
-    public void degreeMaxTime() {
-        maxTime--;
     }
 
     public void setMaxTime(int maxTime, boolean save) {
@@ -629,8 +764,8 @@ public class Arena {
         }
     }
 
-    public void setTime(int time, boolean save) {
-        this.time = time;
+    public void setWaitToStartTime(int time, boolean save) {
+        this.waitToStartTime = time;
         if (save) {
             configuration.set("Wait To Start Time", time);
             configuration.save();

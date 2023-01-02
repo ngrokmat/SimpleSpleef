@@ -22,12 +22,12 @@ import java.util.stream.Collectors;
 public class ArenaSelectorMenu {
 
     public static void open(Player player, int page) {
-        Inventory inventory = load(player, page);
+        Inventory inventory = load(page);
         player.openInventory(inventory);
         Menu.getPlayersInMenus().put(player, new MenuInfo(player, MenuType.ARENA_SELECTOR_MENU, page, 54));
     }
 
-    protected static Inventory load(Player player, int page) {
+    protected static Inventory load(int page) {
         String title = Menu.getConfiguration().getString("Menus.Arena Selector Menu.Title");
         Inventory inventory = Bukkit.createInventory(null, 54, Utils.format(title));
 

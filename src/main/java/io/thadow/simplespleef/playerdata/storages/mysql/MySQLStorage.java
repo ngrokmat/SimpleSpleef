@@ -2,7 +2,6 @@ package io.thadow.simplespleef.playerdata.storages.mysql;
 
 import io.thadow.simplespleef.Main;
 import io.thadow.simplespleef.api.playerdata.PlayerData;
-import io.thadow.simplespleef.api.storage.mysql.Callback;
 import io.thadow.simplespleef.managers.PlayerDataManager;
 import io.thadow.simplespleef.playerdata.Storage;
 import org.bukkit.Bukkit;
@@ -12,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 public class MySQLStorage {
 
@@ -40,35 +40,8 @@ public class MySQLStorage {
             exception.printStackTrace();
         }
         Storage.setSetupFinished(true);
+        Main.getInstance().getLogger().log(Level.INFO, "Data has been fully loaded. Type: MySQL");
         return playerData;
-    }
-
-    public static void getPlayer(String uuid, Callback callback) {
-        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
-            int wins = 0;
-            int losses = 0;
-            String name = "";
-            boolean found = false;
-            try {
-                PreparedStatement statement = MySQLConnection.getConnection().prepareStatement("SELECT * FROM ssp_data WHERE uuid=?");
-                statement.setString(1, uuid);
-                ResultSet resultSet = statement.executeQuery();
-                if (resultSet.next()) {
-                    name = resultSet.getString("PLAYER_NAME");
-                    wins = resultSet.getInt("WINS");
-                    losses = resultSet.getInt("LOSSES");
-                    found = true;
-                }
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-            }
-            if (found) {
-                PlayerData playerData = new PlayerData(name, uuid, wins, losses);
-                Bukkit.getScheduler().runTask(Main.getInstance(), () -> callback.onEnd(playerData));
-            } else {
-                Bukkit.getScheduler().runTask(Main.getInstance(), () -> callback.onEnd(null));
-            }
-        });
     }
 
     public static boolean containsPlayer(Player player) {

@@ -1,7 +1,5 @@
 package io.thadow.simplespleef.commands;
 
-import io.thadow.simplespleef.api.arena.Status;
-import io.thadow.simplespleef.api.playerdata.PlayerData;
 import io.thadow.simplespleef.arena.Arena;
 import io.thadow.simplespleef.managers.ArenaManager;
 import io.thadow.simplespleef.managers.PlayerDataManager;

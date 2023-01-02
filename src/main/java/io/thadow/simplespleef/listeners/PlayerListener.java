@@ -6,7 +6,6 @@ import io.thadow.simplespleef.api.menu.MenuType;
 import io.thadow.simplespleef.api.party.Party;
 import io.thadow.simplespleef.api.player.SpleefPlayer;
 import io.thadow.simplespleef.arena.Arena;
-import io.thadow.simplespleef.items.ItemGiver;
 import io.thadow.simplespleef.lib.scoreboard.Scoreboard;
 import io.thadow.simplespleef.managers.ArenaManager;
 import io.thadow.simplespleef.managers.PartyManager;
@@ -15,16 +14,13 @@ import io.thadow.simplespleef.menu.Menu;
 import io.thadow.simplespleef.playerdata.Storage;
 import io.thadow.simplespleef.utils.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.*;
@@ -33,21 +29,19 @@ import org.bukkit.inventory.ItemStack;
 public class PlayerListener implements Listener {
 
     @EventHandler
+    public void onPlayerLoginEvent(PlayerLoginEvent event) {
+        if (!Storage.isSetupFinished()) {
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, Utils.format("&c[SimpleSpleef] \n &cData is not fully loaded, please wait. \n &cIf you keep getting this error for too long \n &ccontact an administrator."));
+        }
+    }
+
+    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Storage.getStorage().createPlayer(event.getPlayer());
         PlayerDataManager.getManager().addSpleefPlayer(event.getPlayer());
 
         Player player = event.getPlayer();
-        if (Main.getLobbyLocation() != null) {
-            player.teleport(Main.getLobbyLocation());
-        }
-        player.getInventory().clear();
-        player.getInventory().setArmorContents(null);
-        player.setHealth(20.0D);
-        player.setFlying(false);
-        player.setAllowFlight(false);
-        player.setGameMode(GameMode.ADVENTURE);
-        ItemGiver.getGiver().giveLobbyItems(player);
+        Utils.teleportToLobby(PlayerDataManager.getManager().getSpleefPlayer(player));
     }
 
     @EventHandler
@@ -80,13 +74,15 @@ public class PlayerListener implements Listener {
             arena.removePlayer(spleefPlayer, spleefPlayer.isSpectating());
         }
         PlayerDataManager.getManager().removeSpleefPlayer(spleefPlayer);
-        PartyManager.getManager().getPartyInvites().remove(player.getUniqueId());
         PartyManager.getManager().getInviting().remove(player);
     }
 
     @EventHandler
     public void onPlayerFoodLevel(FoodLevelChangeEvent event) {
         if (event.getEntity() instanceof Player) {
+            if (!Main.getConfiguration().getBoolean("Configuration.Global.No Hunger")) {
+                return;
+            }
             event.setCancelled(true);
             event.setFoodLevel(20);
         }
@@ -159,7 +155,10 @@ public class PlayerListener implements Listener {
                 }
                 if (data.equalsIgnoreCase("PlayAgain")) {
                     event.setCancelled(true);
-                    Bukkit.dispatchCommand(player, "join random");
+                    if (!ArenaManager.getManager().joinRandom(player, true)) {
+                        String message = Utils.getMessage("Messages.Arenas.Play Again.No Arenas Available");
+                        player.sendMessage(message);
+                    }
                     return;
                 }
                 if (data.equalsIgnoreCase("LeaveToHub")) {
@@ -181,6 +180,9 @@ public class PlayerListener implements Listener {
             SpleefPlayer spleefPlayer = PlayerDataManager.getManager().getSpleefPlayer(player);
             Arena arena = spleefPlayer.getArena();
             if (arena == null) {
+                if (!Main.getConfiguration().getBoolean("Configuration.Lobby.Cancel Damage")) {
+                    return;
+                }
                 event.setCancelled(true);
             }
         }
@@ -225,5 +227,4 @@ public class PlayerListener implements Listener {
             }
         }
     }
-
 }

@@ -5,19 +5,16 @@ import io.thadow.simplespleef.api.playerdata.PlayerData;
 import io.thadow.simplespleef.api.storage.StorageType;
 import io.thadow.simplespleef.playerdata.Storage;
 import io.thadow.simplespleef.playerdata.storages.local.LocalStorage;
-import io.thadow.simplespleef.playerdata.storages.mysql.MySQLConnection;
 import io.thadow.simplespleef.playerdata.storages.mysql.MySQLStorage;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class PlayerDataManager {
     @Getter
-    private static PlayerDataManager manager = new PlayerDataManager();
+    private static final PlayerDataManager manager = new PlayerDataManager();
     @Getter
     private ArrayList<PlayerData> players;
     @Getter
@@ -28,12 +25,6 @@ public class PlayerDataManager {
             players = LocalStorage.getPlayers();
         } else if (Storage.getStorage().getStorageType() == StorageType.MYSQL) {
             players = MySQLStorage.getPlayers();
-        }
-    }
-
-    public void savePlayers() {
-        if (Storage.getStorage().getStorageType() == StorageType.LOCAL) {
-            LocalStorage.savePlayers();
         }
     }
 
@@ -60,7 +51,7 @@ public class PlayerDataManager {
             spleefPlayers.put(player, new SpleefPlayer(player, getPlayerData(player.getName())));
             return;
         }
-        spleefPlayers.put(player, getSpleefPlayer(player));
+        spleefPlayers.replace(player, getSpleefPlayer(player));
     }
 
     public void removeSpleefPlayer(SpleefPlayer player) {

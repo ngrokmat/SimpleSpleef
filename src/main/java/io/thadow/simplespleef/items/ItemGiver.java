@@ -1,7 +1,6 @@
 package io.thadow.simplespleef.items;
 
 import io.thadow.simplespleef.Main;
-import io.thadow.simplespleef.api.player.SpleefPlayer;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

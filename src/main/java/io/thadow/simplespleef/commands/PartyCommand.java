@@ -1,6 +1,7 @@
 package io.thadow.simplespleef.commands;
 
 import io.thadow.simplespleef.Main;
+import io.thadow.simplespleef.api.party.Invite;
 import io.thadow.simplespleef.api.party.Party;
 import io.thadow.simplespleef.api.party.PartyPrivacy;
 import io.thadow.simplespleef.managers.PartyManager;
@@ -136,45 +137,14 @@ public class PartyCommand implements CommandExecutor {
                         player.sendMessage(message);
                         return true;
                     }
-                    if (!PartyManager.getManager().getPartyInvites().containsKey(target.getUniqueId())) {
+                    Invite invite = PartyManager.getManager().findInvite(target.getUniqueId(), player.getUniqueId());
+                    if (invite == null) {
                         String message = Utils.getMessage("Messages.Commands.Party Command.Not Invited");
                         message = message.replace("%target%", target.getName());
                         player.sendMessage(message);
                         return true;
                     }
-                    if (!PartyManager.getManager().hasParty(target)) {
-                        String message = Utils.getMessage("Messages.Commands.Party Command.No Party Invited");
-                        message = message.replace("%target%", target.getName());
-                        player.sendMessage(message);
-                        return true;
-                    }
-                    if (PartyManager.getManager().getPartyInvites().get(target.getUniqueId()).equals(player.getUniqueId())) {
-                        PartyManager.getManager().getPartyInvites().remove(target.getUniqueId());
-                            Party party = PartyManager.getManager().getPlayerParty(target);
-                            if (!party.isLeader(target)) {
-                                String message = Utils.getMessage("Messages.Commands.Party Command.Not Leader");
-                                message = message.replace("%target%", target.getName());
-                                player.sendMessage(message);
-                                return true;
-                            }
-                            if (party.getMembers().size() >= PartyManager.getMaxSize()) {
-                                String message = Utils.getMessage("Messages.Commands.Party Command.Party Full");
-                                player.sendMessage(message);
-                                return true;
-                            }
-                            for (Player member : party.getMembers()) {
-                                String message = Utils.getMessage("Messages.Commands.Party Command.Player Joined");
-                                message = message.replace("%target%", player.getName());
-                                member.sendMessage(message);
-                            }
-                            party.addMember(player);
-                            String message = Utils.getMessage("Messages.Commands.Party Command.Invite Accept");
-                            player.sendMessage(message);
-                    } else {
-                        String message = Utils.getMessage("Messages.Commands.Party Command.Not Invited");
-                        message = message.replace("%target%", target.getName());
-                        player.sendMessage(message);
-                    }
+                    invite.accept();
                 }
             }  else if (args[0].equalsIgnoreCase("invite") || args[0].equalsIgnoreCase("invitar")) {
                 if (player.hasPermission("simplespleef.commands.party.invite")) {
@@ -213,18 +183,16 @@ public class PartyCommand implements CommandExecutor {
                         player.sendMessage(message);
                         return true;
                     }
-                    if (PartyManager.getManager().getPartyInvites().containsKey(player.getUniqueId())) {
-                        if (PartyManager.getManager().getPartyInvites().get(player.getUniqueId()) == target.getUniqueId()) {
-
-                        }
-                        PartyManager.getManager().getPartyInvites().replace(player.getUniqueId(), target.getUniqueId());
-                    } else {
-                        PartyManager.getManager().getPartyInvites().put(player.getUniqueId(), target.getUniqueId());
+                    Invite invite = new Invite(target.getUniqueId(), player.getUniqueId());
+                    if (PartyManager.getManager().alreadyInvited(player.getUniqueId(), target.getUniqueId())) {
+                        String message = Utils.getMessage("Messages.Commands.Party Command.Already Invited");
+                        player.sendMessage(message);
+                        return true;
                     }
+                    int expireTime = Main.getConfiguration().getInt("Configuration.Parties.Invite Expire Time");
                     String message = Utils.getMessage("Messages.Commands.Party Command.Invite Sent");
                     player.sendMessage(message);
                     String inviteMessage = Utils.getMessage("Messages.Commands.Party Command.Invite Message");
-                    int expireTime = Main.getConfiguration().getInt("Configuration.Parties.Expire Time");
                     inviteMessage = inviteMessage.replace("%from%", player.getName());
                     inviteMessage = inviteMessage.replace("%time%", String.valueOf(expireTime));
                     String hoverMessage = Utils.getMessage("Messages.Commands.Party Command.Invite Message Hover");
@@ -233,17 +201,7 @@ public class PartyCommand implements CommandExecutor {
                     component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party accept " + player.getName()));
                     component.setText(Utils.format(inviteMessage));
                     target.spigot().sendMessage(component);
-                    Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-                        if (!PartyManager.getManager().getPartyInvites().containsKey(player.getUniqueId())) {
-                            return;
-                        }
-                        PartyManager.getManager().getPartyInvites().remove(player.getUniqueId());
-                        if (target.isOnline()) {
-                            String exMessage = Utils.getMessage("Messages.Commands.Party Command.Invite Expired");
-                            exMessage = exMessage.replace("%from%", player.getName());
-                            target.sendMessage(exMessage);
-                        }
-                    }, 20L * expireTime);
+                    invite.create();
                 }
             } else if (args[0].equalsIgnoreCase("kick") || args[0].equalsIgnoreCase("expulsar")) {
                 if (player.hasPermission("simplespleef.commands.party.kick")) {

@@ -19,7 +19,7 @@ public class SignsManager {
             if (!(sign.getState() instanceof Sign)) {
                 return;
             }
-            String path = "", data = "";
+            String path, data;
             switch (arena.getStatus()) {
                 case WAITING:
                     path = "Status.Waiting.Material";

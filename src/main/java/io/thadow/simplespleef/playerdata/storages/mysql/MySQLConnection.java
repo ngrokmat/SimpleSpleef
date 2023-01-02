@@ -1,6 +1,7 @@
 package io.thadow.simplespleef.playerdata.storages.mysql;
 
-import io.thadow.simplespleef.utils.Utils;
+import io.thadow.simplespleef.Main;
+import io.thadow.simplespleef.playerdata.Storage;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -8,9 +9,11 @@ import org.bukkit.Bukkit;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 public class MySQLConnection {
-    @Getter @Setter
+    @Getter
+    @Setter
     private static Connection connection;
     String host;
     int port;
@@ -38,12 +41,14 @@ public class MySQLConnection {
                 String url = "jdbc:mysql://" + host + "/" + database + "?useSSL=" + ssl + "&autoReconnect=true";
                 Class.forName("com.mysql.jdbc.Driver");
                 setConnection(DriverManager.getConnection(url, username, password));
-                Bukkit.getConsoleSender().sendMessage(Utils.format("&aDatabase connected."));
+                Main.getInstance().getLogger().log(Level.INFO, "Database connected successfully.");
                 MySQLStorage.createTable();
             }
-    } catch (SQLException | ClassNotFoundException exception) {
-            exception.printStackTrace();
+        } catch (SQLException | ClassNotFoundException exception) {
+            Storage.setStorageError(true);
+            Main.getInstance().getLogger().log(Level.SEVERE, "An error occurred while connecting to the database: " + exception.getMessage());
+            Main.getInstance().getLogger().log(Level.INFO, "Disabling to prevent errors...");
+            Bukkit.getPluginManager().disablePlugin(Main.getInstance());
         }
     }
-
 }

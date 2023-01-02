@@ -9,7 +9,6 @@ import io.thadow.simplespleef.utils.Utils;
 import lombok.Getter;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ import java.util.List;
 
 public class ScoreboardManager {
     @Getter
-    private static ScoreboardManager manager = new ScoreboardManager();
+    private static final ScoreboardManager manager = new ScoreboardManager();
 
     public static void updateLobbyScoreboard(SpleefPlayer player) {
         String title = getPath("Scoreboards.Lobby.Title");
@@ -79,7 +78,7 @@ public class ScoreboardManager {
             line = line.replace("%wins%", String.valueOf(player.getPlayerData().getWins()));
             line = line.replace("%losses%", String.valueOf(player.getPlayerData().getLosses()));
             line = line.replace("%arenaName%", arena.getArenaName());
-            line = line.replace("%seconds%", String.valueOf(arena.getTime()));
+            line = line.replace("%seconds%", String.valueOf(arena.getWaitToStartTime()));
             line = PlaceholderAPI.setPlaceholders(player.getPlayer(), line);
             line = Utils.format(line);
             newLines.add(line);
@@ -146,7 +145,13 @@ public class ScoreboardManager {
         if (getBoolean("Scoreboards.Lobby.Enabled")) {
             scheduler.scheduleSyncRepeatingTask(Main.getInstance(), () -> {
                 for (SpleefPlayer player : PlayerDataManager.getManager().getSpleefPlayers().values()) {
+                    Scoreboard scoreboard = Scoreboard.scoreboards.get(player.getUniqueId());
                     if (player.getArena() == null) {
+                        if (!getBoolean("Scoreboards.Lobby.Enabled")) {
+                            Scoreboard.scoreboards.remove(player.getUniqueId());
+                            scoreboard.delete();
+                            return;
+                        }
                         updateLobbyScoreboard(player);
                     }
                 }
@@ -156,8 +161,15 @@ public class ScoreboardManager {
         if (getBoolean("Scoreboards.Waiting.Enabled")) {
             scheduler.scheduleSyncRepeatingTask(Main.getInstance(), () -> {
                 for (SpleefPlayer player : PlayerDataManager.getManager().getSpleefPlayers().values()) {
-                    if (player.getArena() == null)
+                    Scoreboard scoreboard = Scoreboard.scoreboards.get(player.getUniqueId());
+                    if (player.getArena() == null) {
                         return;
+                    }
+                    if (!getBoolean("Scoreboards.Waiting.Enabled")) {
+                        Scoreboard.scoreboards.remove(player.getUniqueId());
+                        scoreboard.delete();
+                        return;
+                    }
                     if (player.getArena().getStatus() == Status.WAITING) {
                         updateWaitingScoreboard(player);
                     }
@@ -168,8 +180,15 @@ public class ScoreboardManager {
         if (getBoolean("Scoreboards.Starting.Enabled")) {
             scheduler.scheduleSyncRepeatingTask(Main.getInstance(), () -> {
                 for (SpleefPlayer player : PlayerDataManager.getManager().getSpleefPlayers().values()) {
-                    if (player.getArena() == null)
+                    Scoreboard scoreboard = Scoreboard.scoreboards.get(player.getUniqueId());
+                    if (player.getArena() == null) {
                         return;
+                    }
+                    if (!getBoolean("Scoreboards.Starting.Enabled")) {
+                        Scoreboard.scoreboards.remove(player.getUniqueId());
+                        scoreboard.delete();
+                        return;
+                    }
                     if (player.getArena().getStatus() == Status.STARTING) {
                         updateStartingScoreboard(player);
                     }
@@ -180,8 +199,15 @@ public class ScoreboardManager {
         if (getBoolean("Scoreboards.Playing.Enabled")) {
             scheduler.scheduleSyncRepeatingTask(Main.getInstance(), () -> {
                 for (SpleefPlayer player : PlayerDataManager.getManager().getSpleefPlayers().values()) {
-                    if (player.getArena() == null)
+                    Scoreboard scoreboard = Scoreboard.scoreboards.get(player.getUniqueId());
+                    if (player.getArena() == null) {
                         return;
+                    }
+                    if (!getBoolean("Scoreboards.Playing.Enabled")) {
+                        Scoreboard.scoreboards.remove(player.getUniqueId());
+                        scoreboard.delete();
+                        return;
+                    }
                     if (player.getArena().getStatus() == Status.PLAYING) {
                         updatePlayingScoreboard(player);
                     }
@@ -192,48 +218,21 @@ public class ScoreboardManager {
         if (getBoolean("Scoreboards.Ending.Enabled")) {
             scheduler.scheduleSyncRepeatingTask(Main.getInstance(), () -> {
                 for (SpleefPlayer player : PlayerDataManager.getManager().getSpleefPlayers().values()) {
+                    Scoreboard scoreboard = Scoreboard.scoreboards.get(player.getUniqueId());
                     if (player.getArena() == null) {
                         return;
                     }
                     if (player.getArena().getStatus() == Status.ENDING) {
+                        if (!getBoolean("Scoreboards.Ending.Enabled")) {
+                            Scoreboard.scoreboards.remove(player.getUniqueId());
+                            scoreboard.delete();
+                        }
                         updateEndingScoreboard(player);
                     }
                 }
             }, 0, endingUpdate);
         }
 
-        scheduler.scheduleSyncRepeatingTask(Main.getInstance(), () -> {
-            for (SpleefPlayer player : PlayerDataManager.getManager().getSpleefPlayers().values()) {
-                Scoreboard scoreboard = Scoreboard.scoreboards.get(player.getUniqueId());
-                Arena arena = player.getArena();
-                if (arena == null && !getBoolean("Scoreboards.Lobby.Enabled")) {
-                    Scoreboard.scoreboards.remove(player.getUniqueId());
-                    scoreboard.delete();
-                    return;
-                }
-                if (scoreboard != null) {
-                    if (arena != null && arena.getStatus() == Status.WAITING && !getBoolean("Scoreboards.Waiting.Enabled")) {
-                        Scoreboard.scoreboards.remove(player.getUniqueId());
-                        scoreboard.delete();
-                        return;
-                    }
-                    if (arena != null && arena.getStatus() == Status.STARTING && !getBoolean("Scoreboards.Starting.Enabled")) {
-                        Scoreboard.scoreboards.remove(player.getUniqueId());
-                        scoreboard.delete();
-                        return;
-                    }
-                    if (arena != null && arena.getStatus() == Status.PLAYING && !getBoolean("Scoreboards.Playing.Enabled")) {
-                        Scoreboard.scoreboards.remove(player.getUniqueId());
-                        scoreboard.delete();
-                        return;
-                    }
-                    if (arena != null && arena.getStatus() == Status.ENDING && !getBoolean("Scoreboards.Ending.Enabled")) {
-                        Scoreboard.scoreboards.remove(player.getUniqueId());
-                        scoreboard.delete();
-                    }
-                }
-            }
-        }, 20L, 20L);
     }
 
     private static String getPath(String path) {

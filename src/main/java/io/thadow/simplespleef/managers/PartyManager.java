@@ -1,6 +1,7 @@
 package io.thadow.simplespleef.managers;
 
 import io.thadow.simplespleef.Main;
+import io.thadow.simplespleef.api.party.Invite;
 import io.thadow.simplespleef.api.party.Party;
 import io.thadow.simplespleef.api.party.PartyPrivacy;
 import io.thadow.simplespleef.utils.Utils;
@@ -8,7 +9,6 @@ import lombok.Getter;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,7 +16,7 @@ public class PartyManager {
     @Getter
     private static final PartyManager manager = new PartyManager();
     @Getter
-    private final HashMap<UUID, UUID> partyInvites = new HashMap<>();
+    private final List<Invite> invites = new ArrayList<>();
     @Getter
     private final List<Player> inviting = new ArrayList<>();
     @Getter
@@ -72,5 +72,27 @@ public class PartyManager {
             }
         }
         return parties;
+    }
+
+    public boolean alreadyInvited(UUID inviter, UUID invitedPlayer) {
+        for (Invite invite : getInvites()) {
+            if (invite.getInviter() == inviter && invite.getInvitedPlayer() == invitedPlayer) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Invite findInvite(UUID inviter, UUID invitedPlayer) {
+        Invite invite = null;
+
+        for (Invite it : getInvites()) {
+            if (it.getInviter() == inviter && it.getInvitedPlayer() == invitedPlayer) {
+                invite = it;
+                break;
+            }
+        }
+
+        return invite;
     }
 }

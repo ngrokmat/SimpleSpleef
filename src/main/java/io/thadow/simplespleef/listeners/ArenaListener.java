@@ -6,6 +6,7 @@ import io.thadow.simplespleef.api.player.SpleefPlayer;
 import io.thadow.simplespleef.arena.Arena;
 import io.thadow.simplespleef.items.ItemBuilder;
 import io.thadow.simplespleef.managers.PlayerDataManager;
+import io.thadow.simplespleef.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,10 +21,32 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 import java.util.List;
 
 public class ArenaListener implements Listener {
+
+    @EventHandler
+    public void checkArenaZone(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        SpleefPlayer spleefPlayer = PlayerDataManager.getManager().getSpleefPlayer(player);
+        if (spleefPlayer.getArena() != null) {
+            Arena arena = spleefPlayer.getArena();
+            if (arena.getCorner1() == null || arena.getCorner2() == null) {
+                return;
+            }
+            Location toLocation = event.getTo();
+            if (arena.getStatus() == Status.PLAYING || arena.getStatus() == Status.ENDING) {
+                Utils.Region region = new Utils.Region(
+                        new Vector(arena.getCorner1().getBlockX(), arena.getCorner1().getBlockY(), arena.getCorner1().getBlockZ()),
+                        new Vector(arena.getCorner2().getBlockX(), arena.getCorner2().getBlockY(), arena.getCorner2().getBlockZ()));
+                if (!region.isInside(toLocation)) {
+                    player.teleport(arena.getSpawnLocation());
+                }
+            }
+        }
+    }
 
     @EventHandler
     public void checkTouchBlockDeathMode(PlayerMoveEvent event) {
@@ -179,6 +202,10 @@ public class ArenaListener implements Listener {
         Arena arena = spleefPlayer.getArena();
         if (arena != null) {
             if (spleefPlayer.isSpectating()) {
+                event.setCancelled(true);
+                return;
+            }
+            if (arena.getStatus() != Status.PLAYING) {
                 event.setCancelled(true);
                 return;
             }

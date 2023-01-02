@@ -21,6 +21,8 @@ public class Storage {
     private static final Storage storage = new Storage();
     @Getter @Setter
     private static boolean setupFinished = false;
+    @Getter @Setter
+    private static boolean storageError = false;
 
     public void addWin(Player player) {
         if (getStorageType() == StorageType.LOCAL) {
@@ -54,8 +56,8 @@ public class Storage {
 
     public void setupStorage(StorageType storageType) {
         if (storageType == StorageType.LOCAL) {
-            LocalStorage.setup();
             setStorageType(StorageType.LOCAL);
+            LocalStorage.setup();
         } else if (storageType == StorageType.MYSQL) {
             String host = Main.getConfiguration().getString("Configuration.Storage.MySQL.Host");
             int port = Main.getConfiguration().getInt("Configuration.Storage.MySQL.Port");
@@ -64,10 +66,14 @@ public class Storage {
             String password = Main.getConfiguration().getString("Configuration.Storage.MySQL.Password");
             boolean ssl = Main.getConfiguration().getBoolean("Configuration.Storage.MySQL.SSL");
             (new MySQLConnection()).setup(host, port, database, username, password, ssl);
+            setStorageType(StorageType.MYSQL);
         }
     }
 
     public void startSaveTask() {
+        if (storageType == StorageType.MYSQL) {
+            return;
+        }
         int delay = Main.getConfiguration().getInt("Configuration.Storage.Local.Save Every");
         Bukkit.getScheduler().scheduleSyncRepeatingTask(Main.getInstance(), () -> {
             save();

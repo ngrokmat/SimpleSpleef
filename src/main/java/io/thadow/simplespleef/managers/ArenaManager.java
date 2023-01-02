@@ -19,7 +19,7 @@ public class ArenaManager {
     @Getter
     private static final ArenaManager manager = new ArenaManager();
     @Getter
-    private List<Arena> arenas = new ArrayList<>();
+    private final List<Arena> arenas = new ArrayList<>();
 
     public Arena getArenaByID(String id) {
         for (Arena arena : arenas) {
@@ -62,8 +62,16 @@ public class ArenaManager {
     public boolean joinRandom(Player player, boolean spectating) {
         List<Arena> arenas = Utils.getSorted(getAvailableArenas());
 
+        if (arenas.isEmpty()) {
+            return false;
+        }
+
         if (spectating) {
-            ArenaManager.getManager().handleLeave(PlayerDataManager.getManager().getSpleefPlayer(player), PlayerDataManager.getManager().getSpleefPlayer(player).getArena(), true);
+            Arena arena = PlayerDataManager.getManager().getSpleefPlayer(player).getArena();
+            if (arena == null) {
+                return false;
+            }
+            arena.remove(PlayerDataManager.getManager().getSpleefPlayer(player));
         }
 
         for (Arena arena : arenas) {
@@ -148,9 +156,8 @@ public class ArenaManager {
         return true;
     }
 
-    public boolean handleLeave(SpleefPlayer player, Arena arena, boolean silent) {
+    public void handleLeave(SpleefPlayer player, Arena arena, boolean silent) {
         arena.removePlayer(player, silent);
-        return true;
     }
 
     public void loadArenas() {

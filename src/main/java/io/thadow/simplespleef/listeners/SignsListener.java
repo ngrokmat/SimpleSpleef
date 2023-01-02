@@ -185,7 +185,6 @@ public class SignsListener implements Listener {
                         locations.add(event.getLine(3) + ";" + locationToString(event.getBlock().getLocation()));
                         Main.getSignsConfiguration().set("Locations", locations);
                         Main.getSignsConfiguration().save();
-                        saved = true;
                     }
                     Arena arena = ArenaManager.getManager().getArenaByID(event.getLine(1));
                     if (arena == null) {

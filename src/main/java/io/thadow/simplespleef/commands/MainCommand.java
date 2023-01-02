@@ -37,7 +37,11 @@ public class MainCommand implements CommandExecutor {
                         player.sendMessage("Solo arena");
                         return true;
                     }
-                    arena.initStarting(true);
+                    if (arena.getStatus() == Status.STARTING) {
+                        player.sendMessage("La arena ya esta iniciando!");
+                        return true;
+                    }
+                    arena.initCountdown(true);
                     player.sendMessage("El inicio a sido forzado.");
                 } else if (args[0].equalsIgnoreCase("createArena") && args.length == 2) {
                     player.sendMessage(ArenaManager.getManager().createArena(args[1]) ? "Arena creada" : "La arena ya existe");
@@ -86,6 +90,7 @@ public class MainCommand implements CommandExecutor {
                         name.append(" ").append(args[i]);
                     }
                     arena.setArenaName(String.valueOf(name));
+                    player.sendMessage("Nombre de la arena cambiado.");
                 } else if (args[0].equalsIgnoreCase("setMaxPlayers") && args.length == 3) {
                     Arena arena = ArenaManager.getManager().getArenaByID(args[1]);
                     if (arena == null) {
@@ -136,6 +141,7 @@ public class MainCommand implements CommandExecutor {
                         return true;
                     }
                     arena.setWaitLocation(player.getLocation());
+                    player.sendMessage("WaitLocation cambiada");
                     return true;
                 } else if (args[0].equalsIgnoreCase("setSpawnLocation") && args.length == 2) {
                     Arena arena = ArenaManager.getManager().getArenaByID(args[1]);
@@ -148,6 +154,33 @@ public class MainCommand implements CommandExecutor {
                         return true;
                     }
                     arena.setSpawnLocation(player.getLocation());
+                    player.sendMessage("SpawnLocation cambiada");
+                    return true;
+                } else if (args[0].equalsIgnoreCase("setCorner1") && args.length == 2) {
+                    Arena arena = ArenaManager.getManager().getArenaByID(args[1]);
+                    if (arena == null) {
+                        player.sendMessage("La arena no existe");
+                        return true;
+                    }
+                    if (arena.isEnabled()) {
+                        player.sendMessage("La arena esta activada!");
+                        return true;
+                    }
+                    arena.setCorner1(player.getLocation());
+                    player.sendMessage("Corner 1 cambiado");
+                    return true;
+                } else if (args[0].equalsIgnoreCase("setCorner2") && args.length == 2) {
+                    Arena arena = ArenaManager.getManager().getArenaByID(args[1]);
+                    if (arena == null) {
+                        player.sendMessage("La arena no existe");
+                        return true;
+                    }
+                    if (arena.isEnabled()) {
+                        player.sendMessage("La arena esta activada!");
+                        return true;
+                    }
+                    arena.setCorner2(player.getLocation());
+                    player.sendMessage("Corner 2 cambiado");
                     return true;
                 } else {
                     List<String> usageMessage = Main.getConfiguration().getStringList("Messages.Commands.Main Command.Usage");

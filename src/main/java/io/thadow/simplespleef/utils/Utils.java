@@ -3,10 +3,15 @@ package io.thadow.simplespleef.utils;
 import io.thadow.simplespleef.Main;
 import io.thadow.simplespleef.api.arena.Status;
 import io.thadow.simplespleef.api.configuration.ConfigurationFile;
+import io.thadow.simplespleef.api.event.PlayerLeaveArenaEvent;
+import io.thadow.simplespleef.api.player.SpleefPlayer;
 import io.thadow.simplespleef.arena.Arena;
+import io.thadow.simplespleef.items.ItemGiver;
 import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -112,7 +117,7 @@ public class Utils {
         return format(status);
     }
 
-    public static boolean sendPlayerTo(Player player, String server) {
+    public static void sendPlayerTo(Player player, String server) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(baos);
@@ -121,9 +126,8 @@ public class Utils {
             player.sendPluginMessage(Main.getInstance(), "BungeeCord", baos.toByteArray());
             baos.close();
             out.close();
-            return true;
         } catch (Exception exception) {
-            return false;
+            exception.printStackTrace();
         }
     }
 
@@ -149,6 +153,38 @@ public class Utils {
         float yaw = location.getYaw();
         float pitch = location.getPitch();
         return world + ";" + x + ";" + y + ";" + z + ";" + yaw + ";" + pitch;
+    }
+
+    public static void teleportToLobby(SpleefPlayer player) {
+        player.getPlayer().teleport(Main.getLobbyLocation());
+        for (Player players : Bukkit.getOnlinePlayers()) {
+            if (player.isSpectating()) {
+                if (!players.canSee(player.getPlayer())) {
+                    players.showPlayer(player.getPlayer());
+                }
+            }
+        }
+        if (Main.getConfiguration().getBoolean("Configuration.Lobby.Clear Inventory")) {
+            player.getPlayer().getInventory().clear();
+        }
+        if (Main.getConfiguration().getBoolean("Configuration.Lobby.Clear Armor Contents")) {
+            player.getPlayer().getInventory().setArmorContents(null);
+        }
+        if (!Main.getConfiguration().getBoolean("Configuration.Lobby.Allow Flight")) {
+            player.getPlayer().setAllowFlight(false);
+        }
+        if (!Main.getConfiguration().getBoolean("Configuration.Lobby.Set Flying")) {
+            player.getPlayer().setFlying(false);
+        }
+        String mode = Main.getConfiguration().getString("Configuration.Lobby.GameMode");
+        player.getPlayer().setGameMode(GameMode.valueOf(mode));
+        player.getPlayer().setHealth(20.0D);
+        player.getPlayer().removePotionEffect(PotionEffectType.INVISIBILITY);
+        PlayerLeaveArenaEvent event = new PlayerLeaveArenaEvent(player.getArena(), player.getPlayer(), player);
+        Bukkit.getPluginManager().callEvent(event);
+        ItemGiver.getGiver().giveLobbyItems(player.getPlayer());
+        player.setArena(null);
+        player.setSpectating(false);
     }
 
     public static List<Arena> getSorted(List<Arena> arenas) {
@@ -180,5 +216,28 @@ public class Utils {
             }
         });
         return sorted;
+    }
+
+    public static class Region {
+        private final Vector corner1;
+        private final Vector corner2;
+
+        public Region(Vector corner1, Vector corner2) {
+            int x1 = Math.min(corner1.getBlockX(), corner2.getBlockX());
+            int y1 = Math.min(corner1.getBlockY(), corner2.getBlockY());
+            int z1 = Math.min(corner1.getBlockZ(), corner2.getBlockZ());
+            int x2 = Math.max(corner1.getBlockX(), corner2.getBlockX());
+            int y2 = Math.max(corner1.getBlockY(), corner2.getBlockY());
+            int z2 = Math.max(corner1.getBlockZ(), corner2.getBlockZ());
+            this.corner1 = new Vector(x1, y1, z1);
+            this.corner2 = new Vector(x2, y2, z2);
+        }
+
+        public boolean isInside(Location location) {
+            if (location == null) {
+                return false;
+            }
+            return location.getBlockX() >= this.corner1.getBlockX() && location.getBlockX() <= this.corner2.getBlockX() && location.getBlockY() >= this.corner1.getBlockY() && location.getBlockY() <= this.corner2.getBlockY() && location.getBlockZ() >= this.corner1.getBlockZ() && location.getBlockZ() <= this.corner2.getBlockZ();
+        }
     }
 }
