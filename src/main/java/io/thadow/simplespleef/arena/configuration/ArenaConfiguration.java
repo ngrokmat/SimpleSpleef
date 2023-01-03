@@ -3,7 +3,9 @@ package io.thadow.simplespleef.arena.configuration;
 import io.thadow.simplespleef.api.configuration.ConfigurationFile;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class ArenaConfiguration extends ConfigurationFile {
     public ArenaConfiguration(String configName, String dir) {
@@ -28,12 +30,10 @@ public class ArenaConfiguration extends ConfigurationFile {
 
         configuration.addDefault("Start Teleport Mode.Mode", "SAME_LOCATION");
 
-        configuration.addDefault("Spleef Mode.Special To Give.Snow.Enabled", true);
-        configuration.addDefault("Spleef Mode.Special To Give.Snow.Amount", 3);
-        configuration.addDefault("Spleef Mode.Special To Give.Egg.Enabled", false);
-        configuration.addDefault("Spleef Mode.Special To Give.Egg.Amount", 3);
-        configuration.addDefault("Spleef Mode.Special To Give.Bow.Enabled", false);
-        configuration.addDefault("Spleef Mode.Special To Give.Bow.Arrow Amount", 5);
+        configuration.addDefault("Spleef Mode.Special To Give.Enabled", true);
+        List<String> items = new ArrayList<String>();
+        items.add("SNOW_BALL:3");
+        configuration.addDefault("Spleef Mode.Special To Give.Items", items);
         configuration.addDefault("Spleef Mode.Allowed Breakable Blocks", Collections.singletonList("SNOW"));
 
         configuration.addDefault("Inventory.Items.Slot 1.Material", "DIAMOND_SPADE");

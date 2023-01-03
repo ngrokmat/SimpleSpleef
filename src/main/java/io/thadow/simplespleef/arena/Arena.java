@@ -76,11 +76,11 @@ public class Arena {
     @Getter
     List<String> allowedBreakableBlocks;
     @Getter
-    boolean snowSpecialEnabled, eggSpecialEnabled, bowSpecialEnabled;
-    @Getter
-    int snowSpecialAmount, eggSpecialAmount, arrowSpecialAmount;
-    @Getter
     HashMap<Integer, ItemStack> items = new HashMap<>();
+    @Getter
+    List<String> specialItems = new ArrayList<>();
+    @Getter
+    boolean specialEnabled;
     @Getter
     boolean forceStarted = false;
 
@@ -93,12 +93,8 @@ public class Arena {
         yLevelMode = configuration.getInt("Death Mode.Y Level Mode.Y Level");
         teleportDeathMode = TeleportDeathMode.valueOf(configuration.getString("Teleport Death Mode.Mode"));
         startTeleportMode = StartTeleportMode.valueOf(configuration.getString("Start Teleport Mode.Mode"));
-        snowSpecialEnabled = configuration.getBoolean("Spleef Mode.Special To Give.Snow.Enabled");
-        eggSpecialEnabled = configuration.getBoolean("Spleef Mode.Special To Give.Egg.Enabled");
-        bowSpecialEnabled = configuration.getBoolean("Spleef Mode.Special To Give.Bow.Enabled");
-        snowSpecialAmount = configuration.getInt("Spleef Mode.Special To Give.Snow.Amount");
-        eggSpecialAmount = configuration.getInt("Spleef Mode.Special To Give.Egg.Amount");
-        arrowSpecialAmount = configuration.getInt("Spleef Mode.Special To Give.Bow.Arrow Amount");
+        specialEnabled = configuration.getBoolean("Spleef Mode.Special To Give.Enabled");
+        specialItems.addAll(configuration.getStringList("Spleef Mode.Special To Give.Items"));
         allowedBreakableBlocks = configuration.getStringList("Spleef Mode.Allowed Breakable Blocks");
         arenaName = configuration.getString("Arena Name");
         maxPlayers = configuration.getInt("Max Players");
@@ -131,7 +127,6 @@ public class Arena {
                 items.put(slot, item.build());
             }
         }
-
         if (enabled) {
             setStatus(Status.WAITING);
         } else {

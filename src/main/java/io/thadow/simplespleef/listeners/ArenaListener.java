@@ -17,12 +17,17 @@ import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ArenaListener implements Listener {
@@ -114,6 +119,9 @@ public class ArenaListener implements Listener {
             if (arena == null) {
                 return;
             }
+            if (event.isCancelled()) {
+                return;
+            }
             if (arena.getStatus() == Status.PLAYING) {
                 EntityDamageEvent.DamageCause cause = event.getCause();
                 if (cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) {
@@ -126,6 +134,9 @@ public class ArenaListener implements Listener {
                     event.setCancelled(true);
                 }
                 if (cause == EntityDamageEvent.DamageCause.DROWNING) {
+                    event.setCancelled(true);
+                }
+                if (cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) {
                     event.setCancelled(true);
                 }
             }
@@ -212,30 +223,73 @@ public class ArenaListener implements Listener {
             List<String> allowedBlocks = arena.getAllowedBreakableBlocks();
             Block block = event.getBlock();
             if (allowedBlocks.contains(block.getType().toString())) {
-                if (arena.isSnowSpecialEnabled()) {
-                    int amount = arena.getSnowSpecialAmount();
-                    ItemStack snow = new ItemBuilder(Material.SNOW_BALL, amount).build();
-                    player.getInventory().addItem(snow);
-                }
-                if (arena.isEggSpecialEnabled()) {
-                    int amount = arena.getEggSpecialAmount();
-                    ItemStack egg = new ItemBuilder(Material.EGG, amount).build();
-                    player.getInventory().addItem(egg);
-                }
-                if (arena.isBowSpecialEnabled()) {
-                    int amount = arena.getArrowSpecialAmount();
-                    if (!player.getInventory().contains(Material.BOW)) {
-                        ItemStack bow = new ItemBuilder(Material.BOW, 1).build();
-                        player.getInventory().addItem(bow);
+                if (arena.isSpecialEnabled()) {
+                    for (String item : arena.getSpecialItems()) {
+                        String material = item.split(":")[0];
+                        int amount = Integer.parseInt(item.split(":")[1]);
+                        ItemStack special = new ItemBuilder(Material.valueOf(material), amount).build();
+                        player.getInventory().addItem(special);
                     }
-                    ItemStack arrows = new ItemBuilder(Material.ARROW, amount).build();
-                    player.getInventory().addItem(arrows);
                 }
                 event.getBlock().getDrops().clear();
                 arena.getBrokenBlocks().put(block.getLocation(), block.getType());
                 event.getBlock().getLocation().getWorld().getBlockAt(block.getLocation()).setType(Material.AIR);
             }
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void preventPlacingBlocks(BlockPlaceEvent event) {
+        Player player = event.getPlayer();
+        SpleefPlayer spleefPlayer = PlayerDataManager.getManager().getSpleefPlayer(player);
+        if (spleefPlayer.getArena() != null) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void preventPickupItems(PlayerPickupItemEvent event) {
+        Player player = event.getPlayer();
+        SpleefPlayer spleefPlayer = PlayerDataManager.getManager().getSpleefPlayer(player);
+        if (spleefPlayer.getArena() != null) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void preventDropItems(PlayerDropItemEvent event) {
+        Player player = event.getPlayer();
+        SpleefPlayer spleefPlayer = PlayerDataManager.getManager().getSpleefPlayer(player);
+        if (spleefPlayer.getArena() != null) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void preventMoveItems(InventoryClickEvent event) {
+        if (event.getWhoClicked() instanceof Player) {
+            Player player = (Player) event.getWhoClicked();
+            SpleefPlayer spleefPlayer = PlayerDataManager.getManager().getSpleefPlayer(player);
+            if (spleefPlayer.getArena() != null) {
+                ItemStack clickedItem = event.getCurrentItem();
+                if (clickedItem == null || clickedItem.getType() == Material.AIR) {
+                    return;
+                }
+                Arena arena = spleefPlayer.getArena();
+                Material clickedMaterial = clickedItem.getType();
+                List<String> allowedMovablesItems = new ArrayList<>();
+                for (String specialItem : arena.getSpecialItems()) {
+                    String[] split = specialItem.split(":");
+                    allowedMovablesItems.add(split[0]);
+                }
+                for (ItemStack item : arena.getItems().values()) {
+                    allowedMovablesItems.add(item.getType().toString());
+                }
+                if (!allowedMovablesItems.contains(clickedMaterial.toString())) {
+                    event.setCancelled(true);
+                }
+            }
         }
     }
 }

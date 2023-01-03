@@ -8,7 +8,11 @@ import java.lang.reflect.Constructor;
 
 public class Titles {
     public static void sendTitle(final Player player, final Integer fadeIn, final Integer stay, final Integer fadeOut, final String title, final String subtitle) {
-        send(player, (fadeIn <= 0) ? 20 : fadeIn, (stay <= 0) ? 50 : stay, (fadeOut <= 0) ? 10 : fadeOut, Utils.format(title), Utils.format(subtitle));
+        if (Reflection.Version.getVersion().esMayorIgual(Reflection.Version.v1_17)) {
+            player.sendTitle(Utils.format(title), Utils.format(subtitle), fadeIn, stay, fadeOut);
+        } else {
+            send(player, (fadeIn <= 0) ? 20 : fadeIn, (stay <= 0) ? 50 : stay, (fadeOut <= 0) ? 10 : fadeOut, Utils.format(title), Utils.format(subtitle));
+        }
     }
 
     private static void send(final Player player, final Integer fadeIn, final Integer stay, final Integer fadeOut, final String title, final String subtitle) {

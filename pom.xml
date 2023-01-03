@@ -10,6 +10,19 @@
     <version>1.0</version>
     <modules>
         <module>support_v_1_8_R3</module>
+        <module>support_v_1_9_R2</module>
+        <module>support_v_1_19_R1</module>
+        <module>support_v_1_18_R1</module>
+        <module>support_v_1_17_R1</module>
+        <module>support_v_1_16_R3</module>
+        <module>support_v_1_16_R2</module>
+        <module>support_v_1_16_R1</module>
+        <module>support_v_1_15_R1</module>
+        <module>support_v_1_14_R1</module>
+        <module>support_v_1_13_R2</module>
+        <module>support_v_1_12_R1</module>
+        <module>support_v_1_11_R1</module>
+        <module>support_v_1_10_R1</module>
     </modules>
 
     <properties>
@@ -42,6 +55,12 @@
             <artifactId>spigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.18.1-R0.1-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>

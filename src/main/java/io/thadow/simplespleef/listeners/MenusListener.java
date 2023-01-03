@@ -89,7 +89,7 @@ public class MenusListener implements Listener {
                     if (Main.VERSION_HANDLER.isCustomItem(clickedItem)) {
                         String data = Main.VERSION_HANDLER.getData(clickedItem);
                         if (data.equalsIgnoreCase("CreateParty")) {
-                            Bukkit.dispatchCommand(player, "party create");
+                            Bukkit.getScheduler().runTask(Main.getInstance(), () -> Bukkit.dispatchCommand(player, "party create"));
                             Menu.openMenu(player, MenuType.PARTY_MENU_OPTIONS, 1);
                             return;
                         }

@@ -3,9 +3,22 @@
     <output-path>$PROJECT_DIR$/out/artifacts/SimpleSpleef_1_0</output-path>
     <root id="archive" name="SimpleSpleef-1.0.jar">
       <element id="module-output" name="SimpleSpleef" />
-      <element id="module-output" name="support_v_1_8_R3" />
       <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/playersdata.yml" />
       <element id="file-copy" path="$PROJECT_DIR$/src/main/resources/plugin.yml" />
+      <element id="module-output" name="support_v_1_10_R1" />
+      <element id="module-output" name="support_v_1_11_R1" />
+      <element id="module-output" name="support_v_1_12_R1" />
+      <element id="module-output" name="support_v_1_13_R2" />
+      <element id="module-output" name="support_v_1_14_R1" />
+      <element id="module-output" name="support_v_1_15_R1" />
+      <element id="module-output" name="support_v_1_16_R1" />
+      <element id="module-output" name="support_v_1_16_R2" />
+      <element id="module-output" name="support_v_1_16_R3" />
+      <element id="module-output" name="support_v_1_17_R1" />
+      <element id="module-output" name="support_v_1_18_R2" />
+      <element id="module-output" name="support_v_1_19_R2" />
+      <element id="module-output" name="support_v_1_8_R3" />
+      <element id="module-output" name="support_v_1_9_R2" />
     </root>
   </artifact>
 </component>

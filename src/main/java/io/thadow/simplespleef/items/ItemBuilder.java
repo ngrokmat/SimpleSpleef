@@ -1,5 +1,6 @@
 package io.thadow.simplespleef.items;
 
+import io.thadow.simplespleef.Main;
 import io.thadow.simplespleef.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -9,7 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 
 public class ItemBuilder {
-    private final ItemStack itemStack;
+    private ItemStack itemStack;
 
     public ItemBuilder(Material material, int amount) {
         itemStack = new ItemStack(material, amount);
@@ -41,12 +42,9 @@ public class ItemBuilder {
     }
 
     public ItemBuilder setUnbreakable(boolean unbreakable) {
-        ItemMeta itemMeta = itemStack.getItemMeta();
-        if (itemMeta == null) {
-            return null;
+        if (unbreakable) {
+            itemStack = Main.VERSION_HANDLER.makeUnbreakable(itemStack);
         }
-        itemMeta.spigot().setUnbreakable(unbreakable);
-        itemStack.setItemMeta(itemMeta);
         return this;
     }
 

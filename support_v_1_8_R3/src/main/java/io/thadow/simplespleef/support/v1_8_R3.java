@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 public class v1_8_R3 extends VersionHandler {
@@ -77,5 +78,16 @@ public class v1_8_R3 extends VersionHandler {
     @Override
     public ItemStack createItemStack(String material, int amount, short data) {
         return new ItemStack(Material.valueOf(material), amount, data);
+    }
+
+    @Override
+    public ItemStack makeUnbreakable(ItemStack itemStack) {
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta == null) {
+            return null;
+        }
+        itemMeta.spigot().setUnbreakable(true);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
     }
 }

@@ -114,6 +114,8 @@ public class LocalStorage {
     public static ArrayList<PlayerData> getPlayers() {
         ArrayList<PlayerData> players = new ArrayList<>();
         if (get().getConfigurationSection("Data") == null) {
+            Storage.setSetupFinished(true);
+            Main.getInstance().getLogger().log(Level.INFO, "Data has been fully loaded. Type: LOCAL");
             return players;
         }
         for (String uuid : get().getConfigurationSection("Data").getKeys(false)) {

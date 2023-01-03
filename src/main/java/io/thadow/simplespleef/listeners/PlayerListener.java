@@ -128,7 +128,8 @@ public class PlayerListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         ItemStack itemInHand = player.getItemInHand();
-        if (itemInHand.getType() == null || itemInHand.getType() == Material.AIR || event.getAction().equals(Action.PHYSICAL)) {
+        itemInHand.getType();
+        if (itemInHand.getType() == Material.AIR || event.getAction().equals(Action.PHYSICAL)) {
             return;
         }
         if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
@@ -185,17 +186,6 @@ public class PlayerListener implements Listener {
                 }
                 event.setCancelled(true);
             }
-        }
-    }
-
-    @EventHandler
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
-        Player player = event.getPlayer();
-        if (PartyManager.getManager().getInviting().contains(player)) {
-            PartyManager.getManager().getInviting().remove(player);
-            event.setCancelled(true);
-            String toInvite = event.getMessage();
-            Bukkit.dispatchCommand(player, "party invite " + toInvite);
         }
     }
 

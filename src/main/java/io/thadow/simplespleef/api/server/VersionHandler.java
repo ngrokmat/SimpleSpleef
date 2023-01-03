@@ -30,4 +30,6 @@ public abstract class VersionHandler {
     public abstract String getData(ItemStack itemStack);
 
     public abstract ItemStack createItemStack(String material, int amount, short data);
+
+    public abstract ItemStack makeUnbreakable(ItemStack itemStack);
 }
