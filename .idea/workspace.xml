@@ -27,54 +27,8 @@
     </loaded-modules>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="af7f7854-827d-4cfe-abf5-694ba6d4f010" name="Default Changelist" comment="Update - 11">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/SimpleSpleef_clean.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_10_R1/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_10_R1/src/main/java/io/thadow/simplespleef/support/v1_10_R1.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_11_R1/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_11_R1/src/main/java/io/thadow/simplespleef/support/v1_11_R1.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_12_R1/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_12_R1/src/main/java/io/thadow/simplespleef/support/v1_12_R1.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_13_R2/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_13_R2/src/main/java/io/thadow/simplespleef/support/v1_13_R2.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_14_R1/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_14_R1/src/main/java/io/thadow/simplespleef/support/v1_14_R1.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_15_R1/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_15_R1/src/main/java/io/thadow/simplespleef/support/v1_15_R1.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_16_R1/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_16_R1/src/main/java/io/thadow/simplespleef/support/v1_16_R1.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_16_R2/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_16_R2/src/main/java/io/thadow/simplespleef/support/v1_16_R2.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_16_R3/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_16_R3/src/main/java/io/thadow/simplespleef/support/v1_16_R3.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_17_R1/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_17_R1/src/main/java/io/thadow/simplespleef/support/v1_17_R1.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_18_R2/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_18_R2/src/main/java/io/thadow/simplespleef/support/v1_18_R2.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_19_R2/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_19_R2/src/main/java/io/thadow/simplespleef/support/v1_19_R2.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_9_R2/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/support_v_1_9_R2/src/main/java/io/thadow/simplespleef/support/v1_9_R2.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/SimpleSpleef_1_0.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/SimpleSpleef_1_0.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/SimpleSpleef_lib.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="af7f7854-827d-4cfe-abf5-694ba6d4f010" name="Default Changelist" comment="Update - 12">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/server/VersionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/api/server/VersionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/Arena.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/Arena.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/configuration/ArenaConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/arena/configuration/ArenaConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/items/ItemBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/items/ItemBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/lib/Reflection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/lib/Reflection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/lib/titles/Titles.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/lib/titles/Titles.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/ArenaListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/ArenaListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/MenusListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/MenusListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/PartyListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/PartyListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/PlayerListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/listeners/PlayerListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/playerdata/storages/local/LocalStorage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/io/thadow/simplespleef/playerdata/storages/local/LocalStorage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/support_v_1_8_R3/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/support_v_1_8_R3/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/support_v_1_8_R3/src/main/java/io/thadow/simplespleef/support/v1_8_R3.java" beforeDir="false" afterPath="$PROJECT_DIR$/support_v_1_8_R3/src/main/java/io/thadow/simplespleef/support/v1_8_R3.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -213,7 +167,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672627922766</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Update - 12">
+      <created>1672711949610</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1672711949610</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -253,6 +214,7 @@
     <MESSAGE value="Update - 9" />
     <MESSAGE value="Update - 10" />
     <MESSAGE value="Update - 11" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update - 11" />
+    <MESSAGE value="Update - 12" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update - 12" />
   </component>
 </project>

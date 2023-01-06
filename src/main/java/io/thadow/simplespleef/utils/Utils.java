@@ -156,7 +156,13 @@ public class Utils {
     }
 
     public static void teleportToLobby(SpleefPlayer player) {
-        player.getPlayer().teleport(Main.getLobbyLocation());
+        if (Main.getLobbyLocation() != null) {
+            player.getPlayer().teleport(Main.getLobbyLocation());
+        } else {
+            if (player.getPlayer().isOp()) {
+                player.sendMessage(format("&8[&6SimpleSpleef&8] &cLobby location is not set! Please set the lobby location to prevent errors!"));
+            }
+        }
         for (Player players : Bukkit.getOnlinePlayers()) {
             if (player.isSpectating()) {
                 if (!players.canSee(player.getPlayer())) {

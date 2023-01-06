@@ -108,6 +108,8 @@ public class MainConfiguration extends ConfigurationFile {
         configuration.addDefault("Configuration.Arenas.Ending GameMode", "ADVENTURE");
         configuration.addDefault("Configuration.Arenas.Spectating GameMode", "ADVENTURE");
         configuration.addDefault("Configuration.Arenas.Winner Fireworks Ticks", 5);
+        configuration.addDefault("Configuration.Arenas.Draw.Add Lose", false);
+        configuration.addDefault("Configuration.Arenas.On Leave.Add Lose", true);
         configuration.addDefault("Configuration.Arenas.Nobody", "Nobody");
 
         configuration.addDefault("Messages.Arenas.Party Member In Game", "&6&lParty &8&l>> &cUno de los integrantes de la arena sigue en juego!");
@@ -190,6 +192,19 @@ public class MainConfiguration extends ConfigurationFile {
         mainUsage.add("/sp createArena (id)");
         mainUsage.add("/sp deleteArena (id)");
         configuration.addDefault("Messages.Commands.Main Command.Usage", mainUsage);
+
+        configuration.addDefault("Messages.Commands.Main Command.Only In Arena", "&8[&6SimpleSpleef&8] &cYou only can use this command in arena.");
+        configuration.addDefault("Messages.Commands.Main Command.Lobby Location Set", "&8[&6SimpleSpleef&8] &aLobby Location set successfully.");
+        configuration.addDefault("Messages.Commands.Main Command.Force Started", "&8[&6SimpleSpleef&8] &aThe countdown has been started.");
+        configuration.addDefault("Messages.Commands.Main Command.Arena Already Starting", "&8[&6SimpleSpleef&8] &cAlready starting!");
+        configuration.addDefault("Messages.Commands.Main Command.Arena Created", "&8[&6SimpleSpleef&8] &aArena created successfully!");
+        configuration.addDefault("Messages.Commands.Main Command.Arena Already Created", "&8[&6SimpleSpleef&8] &aArena already created!");
+        configuration.addDefault("Messages.Commands.Main Command.Arena Deleted", "&8[&6SimpleSpleef&8] &aArena deleted successfully!");
+        configuration.addDefault("Messages.Commands.Main Command.Can't Delete", "&8[&6SimpleSpleef&8] &cUnable to delete the arena, maybe is enabled or does not exist!");
+        configuration.addDefault("Messages.Commands.Main Command.Arena Does Not Exist", "&8[&6SimpleSpleef&8] &cUknown Arena");
+        configuration.addDefault("Messages.Commands.Main Command.Arena Is Enabled", "&8[&6SimpleSpleef&8] &aArena is enabled!");
+        configuration.addDefault("Messages.Commands.Main Command.Arena Enabled", "&8[&6SimpleSpleef&8] &aArena enabled successfully.");
+
 
         List<String> partyUsage = new ArrayList<>();
         partyUsage.add("&7&m---------------------------------------------------");
